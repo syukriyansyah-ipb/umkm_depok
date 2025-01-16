@@ -1,7 +1,20 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 
-export default function ProductModal({ product, onClose }) {
+interface Product {
+  id: number;
+  name: string;
+  type: string;
+  image: string;
+  description: string;
+}
+
+interface ProductModalProps {
+  product: Product | null;
+  onClose: () => void;
+}
+
+export default function ProductModal({ product, onClose }: ProductModalProps) {
   if (!product) return null
 
   return (

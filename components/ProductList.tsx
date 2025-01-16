@@ -17,9 +17,17 @@ const products = [
 
 const productTypes = ['All', 'Accessories', 'Electronics']
 
+interface Product {
+  id: number;
+  name: string;
+  type: string;
+  image: string;
+  description: string;
+}
+
 export default function ProductSection() {
   const [filter, setFilter] = useState('All')
-  const [selectedProduct, setSelectedProduct] = useState(null)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
 
   const filteredProducts = filter === 'All' 
     ? products 

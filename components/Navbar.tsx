@@ -5,6 +5,12 @@ import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
+interface NavLinkProps {
+  href: string;
+  children: React.ReactNode;
+  mobile?: boolean;
+}
+
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -72,7 +78,7 @@ export default function Navbar() {
   )
 }
 
-function NavLink({ href, children, mobile = false }) {
+function NavLink({ href, children, mobile = false }: NavLinkProps) {
   return (
     <Link
       href={href}

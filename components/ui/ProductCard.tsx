@@ -1,7 +1,20 @@
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 
-export default function ProductCard({ product, onDetails }) {
+interface Product {
+  id: number;
+  name: string;
+  type: string;
+  image: string;
+  description: string;
+}
+
+interface ProductCardProps {
+  product: Product;
+  onDetails: () => void;
+}
+
+export default function ProductCard({ product, onDetails }: ProductCardProps) {
   return (
     <motion.div
       layout
