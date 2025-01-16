@@ -1,10 +1,9 @@
-// /app/admin/layout.tsx
+'use client'
 import { ReactNode } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation";
 import Header from '../../components/Header';
 
-const AdminLayout = ({ children }: { children: ReactNode }) => {
-  const router = useRouter();
+export default function AdminLayout ({ children }: { children: ReactNode }) {
   
   return (
     <div className="flex flex-col min-h-screen">
@@ -20,4 +19,3 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
   );
 };
 
-export default AdminLayout;

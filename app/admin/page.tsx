@@ -1,5 +1,3 @@
-import { GetServerSideProps } from 'next';
-
 const AdminPage = () => {
   return (
     <div>

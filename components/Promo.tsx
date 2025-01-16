@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import Image from "next/image";
 
 export default function Promo() {
   return (
@@ -44,11 +45,11 @@ export default function Promo() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.6, duration: 0.5 }}
           >
-            <img
+            {/* <Image
               src="/placeholder.svg?height=300&width=300&text=Promo+Image"
               alt="Promo"
               className="w-full h-auto rounded-lg shadow-md"
-            />
+            /> */}
           </motion.div>
         </motion.div>
       </div>
