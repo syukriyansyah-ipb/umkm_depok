@@ -7,15 +7,16 @@ import ProductModal from './ui/ProductModal'
 
 // Updated product data with more realistic images
 const products = [
-  { id: 1, name: 'Classic Watch', type: 'Accessories', image: '/images/sofa_1.png', description: 'Elegant timepiece with a leather strap' },
-  { id: 2, name: 'Wireless Earbuds', type: 'Electronics', image: '/images/sofa_4.png', description: 'High-quality sound with noise cancellation' },
-  { id: 3, name: 'Leather Wallet', type: 'Accessories', image: '/images/sofa_3.png', description: 'Genuine leather wallet with multiple card slots' },
-  { id: 4, name: 'Smartphone', type: 'Electronics', image: '/images/sofa_1.png', description: 'Latest model with advanced camera features' },
-  { id: 5, name: 'Sunglasses', type: 'Accessories', image: '/images/sofa_1.png', description: 'Stylish sunglasses with UV protection' },
-  { id: 6, name: 'Wireless Speaker', type: 'Electronics', image: '/images/sofa_1.png', description: 'Portable speaker with rich, clear sound' },
+  { id: 1, name: 'Large Sofa Blue', type: 'Large', image: '/images/sofa_1.png', description: 'Elegant timepiece with a leather strap' },
+  { id: 2, name: 'Large Sofa White', type: 'Large', image: '/images/sofa_4.png', description: 'High-quality sound with noise cancellation' },
+  { id: 3, name: 'Single Chair', type: 'Single', image: '/images/sofa_3.png', description: 'Genuine leather wallet with multiple card slots' },
+  { id: 1, name: 'Large Sofa Blue', type: 'Large', image: '/images/sofa_1.png', description: 'Elegant timepiece with a leather strap' },
+  { id: 2, name: 'Large Sofa White', type: 'Large', image: '/images/sofa_4.png', description: 'High-quality sound with noise cancellation' },
+  { id: 3, name: 'Single Chair', type: 'Single', image: '/images/sofa_3.png', description: 'Genuine leather wallet with multiple card slots' },
+
 ]
 
-const productTypes = ['All', 'Accessories', 'Electronics']
+const productTypes = ['All', 'Large', 'Single']
 
 interface Product {
   id: number;
