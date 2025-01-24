@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Users, Briefcase, Award, MapPin, Phone, Mail } from 'lucide-react'
+import { MapPin, Phone, Mail } from 'lucide-react'
 
 export default function About() {
   // const stats = [
