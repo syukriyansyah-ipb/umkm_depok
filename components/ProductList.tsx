@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import ProductModal from './ui/ProductModal'
 import Image from 'next/image'
 import { ProductType } from '@/types/productType'
+import { FaTiktok } from 'react-icons/fa'
+// import ShopeeIcon from '@/icons/ShopeeIcon.svg';
 
 // Data produk
 const productData: ProductType[] = [
@@ -149,13 +151,31 @@ export default function ProductList() {
                       Best Seller
                     </span>
                   )}
-                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 space-y-2">
                     <button 
                       onClick={() => setSelectedProduct(product)}
                       className="bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-full hover:bg-white shadow-lg"
                     >
                       View Details
                     </button>
+                    <div className="flex space-x-4 mt-2">
+                      <a 
+                        href="https://www.tiktok.com/@yourstore" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-white hover:text-gray-300 transition-colors duration-300"
+                      >
+                        <FaTiktok size={24} />
+                      </a>
+                      <a 
+                        href="https://shopee.co.id/yourstore" 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-white hover:text-gray-300 transition-colors duration-300"
+                      >
+                        {/* <ShopeeIcon /> */}
+                      </a>
+                    </div>
                   </div>
                 </div>
               </motion.div>

@@ -2,7 +2,7 @@
 import Hero from '@/components/Hero'
 import ProductList from '@/components/ProductList';
 import Promo from '@/components/Promo';
-import Location from '@/components/Location'
+import About from '@/components/About';
 
 
 export default function HomePage ()  {
@@ -11,7 +11,7 @@ export default function HomePage ()  {
       <Hero />
       <Promo />
       <ProductList />
-      <Location />
+      <About />
     </div>
   );
 };
