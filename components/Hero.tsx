@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from "next/image"
+import { useRef, useState, useEffect } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import { sliderData } from '@/lib/sliderData'
-import { motion, AnimatePresence } from 'framer-motion'
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'
 
 // Import Swiper styles
@@ -14,138 +15,161 @@ import 'swiper/css/navigation'
 import 'swiper/css/pagination'
 
 export default function Hero() {
-  const [mounted, setMounted] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(0)
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const containerRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % sliderData.length)
   }
 
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + sliderData.length) % sliderData.length)
+  }
+
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 5000)
+    return () => clearInterval(interval)
+  }, [])
+
   return (
-    <section className="relative w-full h-screen">
-      <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
-        navigation
-        pagination={{ clickable: true }}
-        autoplay={{ delay: 5000 }}
-        loop
-        onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
-        className="w-full h-full"
-      >
-        {sliderData.map((slide, index) => (
-          <SwiperSlide key={slide.id}>
-            <div className="relative w-full h-full flex flex-col md:flex-row overflow-hidden">
-              <div className="w-full md:w-1/2 h-1/2 md:h-full relative z-10">
-                <div className="absolute inset-0 flex flex-col justify-center items-center md:items-start p-4 md:p-8 lg:p-12">
-                  <AnimatePresence mode="wait">
-                    {activeIndex === index && (
-                      <motion.h1 
-                        key={`title-${index}`}
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -20, opacity: 0 }}
-                        transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 mb-2 md:mb-4 text-center md:text-left leading-tight"
-                      >
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-teal-400">
-                          {slide.title}
-                        </span>
-                      </motion.h1>
-                    )}
-                  </AnimatePresence>
-                  <AnimatePresence mode="wait">
-                    {activeIndex === index && (
-                      <motion.p 
-                        key={`desc-${index}`}
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -20, opacity: 0 }}
-                        transition={{ duration: 0.6, delay: 0.4 }}
-                        className="text-lg md:text-xl lg:text-2xl text-gray-600 mb-4 md:mb-8 max-w-md text-center md:text-left leading-relaxed"
-                      >
-                        {slide.description}
-                      </motion.p>
-                    )}
-                  </AnimatePresence>
-                  <AnimatePresence mode="wait">
-                    {activeIndex === index && (
-                      <motion.div
-                        key={`social-${index}`}
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{ y: -20, opacity: 0 }}
-                        transition={{ duration: 0.6, delay: 0.6 }}
-                        className="flex space-x-4"
-                      >
-                        <a href="#" className="text-blue-600 hover:text-blue-800 transition-colors duration-300">
-                          <Facebook size={24} />
-                        </a>
-                        <a href="#" className="text-blue-400 hover:text-blue-600 transition-colors duration-300">
-                          <Twitter size={24} />
-                        </a>
-                        <a href="#" className="text-pink-600 hover:text-pink-800 transition-colors duration-300">
-                          <Instagram size={24} />
-                        </a>
-                        <a href="#" className="text-blue-700 hover:text-blue-900 transition-colors duration-300">
-                          <Linkedin size={24} />
-                        </a>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </div>
-              <div className="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden">
-                <AnimatePresence>
-                  {activeIndex === index && (
-                    <motion.div
-                      key={`bg-${index}`}
-                      initial={{ scale: 1.2, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.8 }}
-                      className="absolute bottom-0 right-0 w-full h-full md:w-3/4 md:h-3/4"
-                    >
-                      <Image
-                        src={slide.backgroundImage || "/placeholder.svg"}
-                        alt={slide.title}
-                        layout="fill"
-                        objectFit="cover"
-                        priority
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                <AnimatePresence>
-                  {activeIndex === index && (
-                    <motion.div
-                      key={`image-${index}`}
-                      initial={{ y: 50, opacity: 0 }}
-                      animate={{ y: 0, opacity: 1 }}
-                      exit={{ y: -50, opacity: 0 }}
-                      transition={{ duration: 0.6, delay: 0.4 }}
-                      className="absolute inset-0 flex items-center justify-center"
-                    >
-                      <div className="relative w-3/4 h-3/4 md:w-4/5 md:h-4/5">
-                        <Image
-                          src={slide.image || "/placeholder.svg"}
-                          alt={`Image for ${slide.title}`}
-                          layout="fill"
-                          objectFit="contain"
-                          priority
-                        />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+    <section className="relative h-[700px]">
+      <div className="container mx-auto h-full">
+        <div className="flex h-full">
+          {/* Left side with white background */}
+          <div className="w-1/3 bg-white p-12 flex flex-col justify-center relative z-10">
+            <div className="space-y-6">
+              <motion.h1
+                key={`title-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-4xl font-bold text-gray-800"
+              >
+                {sliderData[currentSlide].title}
+              </motion.h1>
+
+              <motion.p
+                key={`desc-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="text-gray-600 text-lg"
+              >
+                {sliderData[currentSlide].description}
+              </motion.p>
+
+              <motion.div
+                key={`social-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="flex space-x-4"
+              >
+                <a href="#" className="text-blue-600 hover:text-blue-800 transition-colors duration-300">
+                  <Facebook size={24} />
+                </a>
+                <a href="#" className="text-blue-400 hover:text-blue-600 transition-colors duration-300">
+                  <Twitter size={24} />
+                </a>
+                <a href="#" className="text-pink-600 hover:text-pink-800 transition-colors duration-300">
+                  <Instagram size={24} />
+                </a>
+                <a href="#" className="text-blue-700 hover:text-blue-900 transition-colors duration-300">
+                  <Linkedin size={24} />
+                </a>
+              </motion.div>
+
+              <motion.button
+                key={`button-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="bg-gray-800 text-white px-8 py-3 rounded-full hover:bg-gray-700 transition-colors"
+              >
+                Lihat Koleksi
+              </motion.button>
             </div>
-          </SwiperSlide>
-        ))}
-      </Swiper>
+          </div>
+
+          {/* Right side with image carousel */}
+          <div className="flex-1 relative overflow-hidden">
+            {/* Background Image Container */}
+            <div className="absolute bottom-0 right-0 w-[75%] h-[85%]">
+              <motion.div
+                key={`bg-${currentSlide}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full h-full"
+              >
+                <Image
+                  src={sliderData[currentSlide].backgroundImage}
+                  alt="Background"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </motion.div>
+            </div>
+
+            {/* Product Image */}
+            <motion.div
+              key={`product-${currentSlide}`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0 flex items-center justify-center"
+            >
+              <div className="relative w-[80%] h-[80%]">
+                <Image
+                  src={sliderData[currentSlide].image}
+                  alt={sliderData[currentSlide].title}
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </motion.div>
+
+            {/* Navigation buttons */}
+            <div className="absolute bottom-8 right-8 flex space-x-4 z-20">
+              <button
+                onClick={prevSlide}
+                className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Slide indicators */}
+            <div className="absolute bottom-8 left-8 flex space-x-2 z-20">
+              {sliderData.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    currentSlide === index 
+                      ? 'bg-white w-6' 
+                      : 'bg-white/60 hover:bg-white/80'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   )
 }
