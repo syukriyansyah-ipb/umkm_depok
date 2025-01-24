@@ -34,10 +34,10 @@ export default function Hero() {
   return (
     <section className="relative h-[700px]">
       <div className="container mx-auto h-full">
-        <div className="flex h-full">
+        <div className="flex h-full flex-col md:flex-row">
           {/* Left side with white background */}
-          <div className="w-1/3 bg-white p-12 flex flex-col justify-center relative z-10">
-            <div className="space-y-6">
+          <div className="w-full md:w-1/3 bg-white p-12 flex flex-col justify-center items-center relative z-10">
+            <div className="space-y-6 text-center mt-8">
               <motion.h1
                 key={`title-${currentSlide}`}
                 initial={{ opacity: 0, y: 20 }}
@@ -66,7 +66,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.5, delay: 0.6 }}
-                className="flex space-x-4"
+                className="flex space-x-4 justify-center"
               >
                 <a href="#" className="text-blue-600 hover:text-blue-800 transition-colors duration-300">
                   <Facebook size={24} />
@@ -96,7 +96,7 @@ export default function Hero() {
           </div>
 
           {/* Right side with image carousel */}
-          <div className="flex-1 relative overflow-hidden">
+          <div className="flex-1 relative overflow-hidden w-full">
             {/* Background Image Container */}
             <div className="absolute bottom-0 right-0 w-[75%] h-[85%]">
               <motion.div
