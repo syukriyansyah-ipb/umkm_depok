@@ -1,15 +1,14 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
 import { Users, Briefcase, Award, MapPin, Phone, Mail } from 'lucide-react'
 
 export default function About() {
-  const stats = [
-    { icon: Users, value: '1000+', label: 'Pelanggan Puas' },
-    { icon: Briefcase, value: '50+', label: 'Proyek Selesai' },
-    { icon: Award, value: '10+', label: 'Penghargaan' },
-  ]
+  // const stats = [
+  //   { icon: Users, value: '1000+', label: 'Pelanggan Puas' },
+  //   { icon: Briefcase, value: '50+', label: 'Proyek Selesai' },
+  //   { icon: Award, value: '10+', label: 'Penghargaan' },
+  // ]
 
   return (
     <section className="bg-gray-100 py-16">

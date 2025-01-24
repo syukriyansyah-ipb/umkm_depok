@@ -4,8 +4,8 @@ import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from "next/image"
 import { useRef, useState, useEffect } from 'react'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Pagination, Autoplay } from 'swiper/modules'
+// import { Swiper, SwiperSlide } from 'swiper/react'
+// import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import { sliderData } from '@/lib/sliderData'
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'
 
@@ -16,7 +16,7 @@ import 'swiper/css/pagination'
 
 export default function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const containerRef = useRef<HTMLDivElement>(null)
+  // const containerRef = useRef<HTMLDivElement>(null)
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % sliderData.length)
