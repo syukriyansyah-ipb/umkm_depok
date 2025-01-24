@@ -96,7 +96,7 @@ export default function Hero() {
           </div>
 
           {/* Right side with image carousel */}
-          <div className="flex-1 relative overflow-hidden w-full">
+          <div className="flex-1 relative overflow-hidden w-full bg-white">
             {/* Background Image Container */}
             <div className="absolute bottom-0 right-0 w-[75%] h-[85%]">
               <motion.div
