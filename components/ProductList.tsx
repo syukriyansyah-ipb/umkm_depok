@@ -15,7 +15,8 @@ const productData: ProductType[] = [
     price: 999,
     image: '/images/sofa_1.png',
     type: 'Furniture',
-    description: 'A large blue sofa perfect for living rooms.'
+    description: 'A large blue sofa perfect for living rooms.',
+    isBestSeller: true
   },
   { 
     id: 2, 
@@ -24,7 +25,8 @@ const productData: ProductType[] = [
     price: 899,
     type: 'Furniture',
     image: '/images/sofa_4.png',
-    description: 'A large blue sofa perfect for living rooms.'
+    description: 'A large blue sofa perfect for living rooms.',
+    isBestSeller: true
   },
   { 
     id: 3, 
@@ -33,7 +35,8 @@ const productData: ProductType[] = [
     price: 499,
     type: 'Furniture',
     image: '/images/sofa_3.png',
-    description: 'A large blue sofa perfect for living rooms.'
+    description: 'A large blue sofa perfect for living rooms.',
+    isBestSeller: true
   },
   { 
     id: 4, 
@@ -42,7 +45,8 @@ const productData: ProductType[] = [
     price: 799,
     type: 'Furniture',
     image: '/images/sofa_1.png',
-    description: 'A large blue sofa perfect for living rooms.'
+    description: 'A large blue sofa perfect for living rooms.',
+    isBestSeller: true
   },
   { 
     id: 5, 
@@ -51,7 +55,8 @@ const productData: ProductType[] = [
     price: 1299,
     type: 'Furniture',
     image: '/images/sofa_4.png',
-    description: 'A large blue sofa perfect for living rooms.'
+    description: 'A large blue sofa perfect for living rooms.',
+    isBestSeller: true
   },
   { 
     id: 6, 
@@ -60,7 +65,8 @@ const productData: ProductType[] = [
     price: 599,
     type: 'Furniture',
     image: '/images/sofa_3.png',
-    description: 'A large blue sofa perfect for living rooms.'
+    description: 'A large blue sofa perfect for living rooms.',
+    isBestSeller: true
   },
 ]
 
@@ -120,7 +126,7 @@ export default function ProductList() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
                 transition={{ duration: 0.3 }}
-                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col"
+                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col relative"
               >
                 <div className="relative pt-[100%] w-full overflow-hidden rounded-t-xl group">
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -136,14 +142,21 @@ export default function ProductList() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4">
                     <h3 className="font-semibold text-lg text-white">{product.name}</h3>
                     <p className="text-sm text-gray-300">{product.category}</p>
-                    <p className="font-bold text-xl text-white">${product.price.toLocaleString()}</p>
+                    <p className="font-bold text-xl text-white">Rp {product.price.toLocaleString('id-ID')}</p>
                   </div>
-                  <button 
-                    onClick={() => setSelectedProduct(product)}
-                    className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm text-gray-800 px-6 py-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white shadow-lg"
-                  >
-                    View Details
-                  </button>
+                  {product.isBestSeller && (
+                    <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                      Best Seller
+                    </span>
+                  )}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <button 
+                      onClick={() => setSelectedProduct(product)}
+                      className="bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-full hover:bg-white shadow-lg"
+                    >
+                      View Details
+                    </button>
+                  </div>
                 </div>
               </motion.div>
             ))}

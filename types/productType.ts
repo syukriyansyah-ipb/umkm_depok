@@ -6,4 +6,5 @@ export interface ProductType {
   image: string
   type: string
   description: string
+  isBestSeller: boolean
 } 
