@@ -1,19 +1,31 @@
-'use client'
-import { ReactNode } from 'react';
-// import { useRouter } from "next/navigation";
+"use client"
+import { useAppSelector } from "@/redux/hooks"
+import { useSession } from "next-auth/react"
+import type React from "react"
+import Login from "../components/admin-panel/Login"
+import Loader from "../components/admin-panel/Loader"
+import Sidebar from "../components/admin-panel/Sidebar"
 
-export default function AdminLayout ({ children }: { children: ReactNode }) {
-  
+const Layout = ({ children }: { children: React.ReactNode }) => {
+  const isLoading = useAppSelector((store) => store.loading)
+  const { data: session } = useSession()
+
+  if (!session?.user) {
+    return <Login />
+  }
+
   return (
-    <div className="flex flex-col min-h-screen">
-      <div className="flex flex-row">
-        {/* Sidebar atau menu admin bisa ditambahkan di sini */}
-        <aside className="w-64 bg-gray-200">
-          {/* Menu Admin */}
-        </aside>
-        <main className="flex-grow p-8">{children}</main>
+    <div className="flex h-screen overflow-hidden">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden w-screen">
+        <main className="flex-1 overflow-y-auto bg-gray-200 p-4">
+          <div className="h-full flex flex-col">{children}</div>
+        </main>
       </div>
+      {isLoading && <Loader />}
     </div>
-  );
-};
+  )
+}
+
+export default Layout
 

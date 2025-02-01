@@ -4,8 +4,6 @@ import { motion } from 'framer-motion'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from "next/image"
 import { useState, useEffect } from 'react'
-// import { Swiper, SwiperSlide } from 'swiper/react'
-// import { Navigation, Pagination, Autoplay } from 'swiper/modules'
 import { sliderData } from '@/lib/sliderData'
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'
 

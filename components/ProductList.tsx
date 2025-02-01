@@ -1,12 +1,14 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ProductModal from './ui/ProductModal'
 import Image from 'next/image'
 import { ProductType } from '@/types/productType'
 import { FaTiktok } from 'react-icons/fa'
-// import ShopeeIcon from '@/icons/ShopeeIcon.svg';
+
+import axios from "axios";
+
 
 // Data produk
 const productData: ProductType[] = [
@@ -84,12 +86,42 @@ export default function ProductList() {
   const [activeFilter, setActiveFilter] = useState('all')
   const [filteredProducts, setFilteredProducts] = useState(productData)
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null)
+  
+  // dari contoh
+  const [products, setProducts] = useState<ProductType[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [sortBy, setSortBy] = useState("price");
+  const [loading, setLoading] = useState(true);
 
+  useEffect(() => {
+   
+    axios
+      .get("/api/get_products")
+      .then((res) => {
+        const formattedProducts = res.data.map((item: any) => ({
+          _id: item._id,
+          image: item.image,
+          name: item.name,
+          price: Number(item.price),
+          category: item.category,
+        }));
+        setProducts(formattedProducts);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, []);
+
+
+// asli
   const handleFilterClick = (filterId: string) => {
     setActiveFilter(filterId)
     const filtered = filterId === 'all' 
       ? productData 
-      : productData.filter(product => product.category.toLowerCase() === filterId)
+      // : productData.filter(product => product.category.toLowerCase() === filterId)
+      : productData.filter(product => product.category === filterId)
     setFilteredProducts(filtered)
   }
 
@@ -111,19 +143,24 @@ export default function ProductList() {
               >
                 {filter.label}
               </button>
-            ))}
+            ))
+            }
           </div>
         </div>
-
+        {loading ? (
+          <div className="flex justify-center items-center col-span-full">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
         <motion.div 
           layout
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
         >
           <AnimatePresence mode="popLayout">
-            {filteredProducts.map(product => (
+            {products.map(product => (
               <motion.div
                 layout
-                key={product.id}
+                key={product._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
@@ -182,6 +219,7 @@ export default function ProductList() {
             ))}
           </AnimatePresence>
         </motion.div>
+        )}
       </div>
 
       {selectedProduct && (

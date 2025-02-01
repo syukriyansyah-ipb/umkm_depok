@@ -1,6 +1,6 @@
 // app/api/products/route.ts
 import { NextResponse } from "next/server";
-import { connectToDatabase } from "@/lib/mongodb";
+import { connectToDatabase } from "@/libs/mongoConnect";
 
 export async function GET() {
   const db = await connectToDatabase();
