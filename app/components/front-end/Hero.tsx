@@ -1,108 +1,174 @@
-"use client";
-import { useState, useEffect } from "react";
-import Image from "next/image";
+'use client'
 
-const slides = [
-  {
-    title: "Define Your Style with Our Limited Edition Masterpiece",
-    price: "Rp. 299.000",
-    discount: "20%",
-    image: "/products/baju.png",
-  },
-  {
-    title: "More Savings, More Smiles – Grab Your Cashback Now!",
-    price: "Rp. 399.000 Cashback s/d Rp. 99.000",
-    discount: "40%",
-    image: "/products/atztww.png",
-  },
-  {
-    title: "Buy 1 Get 1 Free – Only for Selected Products!",
-    price: "Starts from Rp. 199.000",
-    discount: "Exclusive Offer",
-    image: "/products/bag.png",
-  },
-];
+import { motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
+import Image from "next/image"
+import { useState, useEffect } from 'react'
+import { sliderData } from '@/lib/sliderData'
+import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'
 
-const Hero = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
+// Import Swiper styles
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 
- 
+export default function Hero() {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  // const containerRef = useRef<HTMLDivElement>(null)
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % sliderData.length)
+  }
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + sliderData.length) % sliderData.length)
+  }
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+    const interval = setInterval(nextSlide, 5000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
-    <div className="bg-gradient-to-r from-blue-100 to-blue-300 mt-30 relative">
-   
-      <div className="absolute top-0 left-0 w-32 h-32 bg-white opacity-20 rounded-full"></div>
-      <div className="absolute bottom-0 right-0 w-48 h-48 bg-red-200 opacity-30 rounded-full"></div>
+    <section className="relative h-[700px]">
+      <div className="container mx-auto h-full">
+        <div className="flex h-full flex-col md:flex-row">
+          {/* Left side with white background */}
+          <div className="w-full md:w-1/3 bg-white p-12 flex flex-col justify-center items-center relative z-10">
+            <div className="space-y-6 text-center mt-8">
+              <motion.h1
+                key={`title-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-4xl font-bold text-gray-800"
+              >
+                {sliderData[currentSlide].title}
+              </motion.h1>
 
-      <div className="container grid md:grid-cols-2 gap-8 items-center py-12 px-6 relative">
-       
-        <div className="max-w-[450px] space-y-6 text-center md:text-left animate-fadeIn mt-20">
-          <h1 className="font-bold text-3xl md:text-5xl text-gray-800 leading-tight">
-            {slides[currentSlide].title}
-          </h1>
-          <p className="text-lg text-gray-600">
-            Start from {" "}
-            <span className="text-red-500 font-semibold">
-              {slides[currentSlide].price}
-            </span>
-          </p>
-          <h3 className="text-xl text-gray-700">
-            Special Discount {" "}
-            <span className="text-red-600 font-bold">
-              {slides[currentSlide].discount}
-            </span>{" "}
-            Only This Week
-          </h3>
-          <a
-            href="#"
-            className="inline-block bg-customPink text-white rounded-md px-8 py-3
-            shadow-lg hover:bg-pink-500 transition duration-300"
-          >
-            Shop Now
-          </a>
+              <motion.p
+                key={`desc-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="text-gray-600 text-lg"
+              >
+                {sliderData[currentSlide].description}
+              </motion.p>
+
+              <motion.div
+                key={`social-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, delay: 0.6 }}
+                className="flex space-x-4 justify-center"
+              >
+                <a href="#" className="text-blue-600 hover:text-blue-800 transition-colors duration-300">
+                  <Facebook size={24} />
+                </a>
+                <a href="#" className="text-blue-400 hover:text-blue-600 transition-colors duration-300">
+                  <Twitter size={24} />
+                </a>
+                <a href="#" className="text-pink-600 hover:text-pink-800 transition-colors duration-300">
+                  <Instagram size={24} />
+                </a>
+                <a href="#" className="text-blue-700 hover:text-blue-900 transition-colors duration-300">
+                  <Linkedin size={24} />
+                </a>
+              </motion.div>
+
+              <motion.button
+                key={`button-${currentSlide}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, delay: 0.8 }}
+                className="bg-gray-800 text-white px-8 py-3 rounded-full hover:bg-gray-700 transition-colors"
+              >
+                Lihat Koleksi
+              </motion.button>
+            </div>
+          </div>
+
+          {/* Right side with image carousel */}
+          <div className="flex-1 relative overflow-hidden w-full bg-white">
+            {/* Background Image Container */}
+            <div className="absolute bottom-0 right-0 w-[75%] h-[85%]">
+              <motion.div
+                key={`bg-${currentSlide}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full h-full"
+              >
+                <Image
+                  src={sliderData[currentSlide].backgroundImage}
+                  alt="Background"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </motion.div>
+            </div>
+
+            {/* Product Image */}
+            <motion.div
+              key={`product-${currentSlide}`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0 flex items-center justify-center"
+            >
+              <div className="relative w-[80%] h-[80%]">
+                <Image
+                  src={sliderData[currentSlide].image}
+                  alt={sliderData[currentSlide].title}
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
+            </motion.div>
+
+            {/* Navigation buttons */}
+            <div className="absolute bottom-8 right-8 flex space-x-4 z-20">
+              <button
+                onClick={prevSlide}
+                className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={nextSlide}
+                className="bg-white/90 backdrop-blur-sm p-2 rounded-full shadow-lg hover:bg-white transition-colors"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Slide indicators */}
+            <div className="absolute bottom-8 left-8 flex space-x-2 z-20">
+              {sliderData.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    currentSlide === index 
+                      ? 'bg-white w-6' 
+                      : 'bg-white/60 hover:bg-white/80'
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
         </div>
-
-    
-        <div className="flex justify-center mt-20">
-          <Image
-            src={slides[currentSlide].image}
-            alt="hero"
-            width={450}
-            height={450}
-            className="rounded-lg shadow-2xl transition-transform duration-500 hover:scale-110"
-          />
-        </div>
-
-   
-        <button
-          onClick={() => setCurrentSlide((currentSlide + 1) % slides.length)}
-          className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-white
-          p-2 rounded-full shadow-md hover:bg-gray-200 transition"
-        >
-          &#10095;
-        </button>
       </div>
+    </section>
+  )
+}
 
-   
-      <div className="flex justify-center gap-2 mt-4">
-        {slides.map((_, index) => (
-          <div
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full cursor-pointer transition ${
-              currentSlide === index ? "bg-red-500" : "bg-gray-300"
-            }`}
-          ></div>
-        ))}
-      </div>
-    </div>
-  );
-};
-
-export default Hero;

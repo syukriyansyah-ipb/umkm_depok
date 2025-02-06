@@ -1,110 +1,69 @@
-"use client"
+// components/admin-panel/Sidebar.tsx
+"use client";
 
-import { useState, useEffect } from "react"
-import { MdDashboard, MdEmojiEvents } from "react-icons/md"
-import { GrTransaction } from "react-icons/gr"
-import { IoMenu, IoImages } from "react-icons/io5"
-import { RiShoppingCartLine } from "react-icons/ri"
-import { BiSolidBuildingHouse } from "react-icons/bi";
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import Image from "next/image"
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { FaBars, FaTimes } from "react-icons/fa";
 
-const menus = [
-  {
-    title: "Dashboard",
-    icon: <MdDashboard />,
-    href: "/admin/dashboard",
-  },
-  {
-    title: "Hero Section",
-    icon: <IoImages />,
-    href: "/admin/hero",
-  },
-  {
-    title: "Promo & Event",
-    icon: <MdEmojiEvents  />,
-    href: "/admin/promo",
-  },
-  {
-    title: "Products",
-    icon: <RiShoppingCartLine />,
-    href: "/admin/products",
-  },
-  {
-    title: "About Section",
-    icon: <BiSolidBuildingHouse />,
-    href: "/admin/about",
-  }
-]
+const menuItems = [
+  { name: "Dashboard", path: "/admin/dashboard", icon: "🏠" },
+  { name: "Hero Section", path: "/admin/hero", icon: "🖼️" },
+  { name: "Events & Promo Section", path: "/admin/events", icon: "🎉" },
+  { name: "Products Section", path: "/admin/products", icon: "🛍️" },
+  { name: "About Section", path: "/admin/about", icon: "📄" },
+  { name: "Users", path: "/admin/users", icon: "👥" },
+];
 
-const Sidebar = () => {
-  const pathName = usePathname()
-  const [isOpen, setIsOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
+export default function Sidebar() {
+  const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768)
-      setIsOpen(window.innerWidth >= 768)
-    }
-
-    handleResize()
-    window.addEventListener("resize", handleResize)
-
-    return () => {
-      window.removeEventListener("resize", handleResize)
-    }
-  }, [])
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen)
-  }
+  const toggleSidebar = () => setIsOpen(!isOpen);
 
   return (
     <>
+      {/* Mobile Toggle Button */}
       <button
-        className="fixed top-4 left-4 z-50 md:hidden text-2xl bg-white p-2 rounded-md shadow-md"
         onClick={toggleSidebar}
-        aria-label="Toggle Sidebar"
+        className="fixed top-4 left-4 z-50 p-2 bg-gray-800 text-white rounded-lg md:hidden"
       >
-        <IoMenu />
+        {isOpen ? <FaTimes size={24} /> : <FaBars size={24} />}
       </button>
-      <div
-        className={`fixed inset-y-0 left-0 z-40 bg-white w-[300px] min-h-screen p-6 shrink-0 transform transition-transform duration-300 ease-in-out shadow-lg ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } md:translate-x-0 md:static`}
-      >
-        <div className="flex items-center justify-center mb-8">
-          <Image src="/products/logoo.png" alt="logo" width={150} height={100} className="rounded-lg" />
-        </div>
 
-        <nav>
-          <ul className="space-y-2">
-            {menus.map((menu) => {
-              const isActive = pathName === menu.href
-              return (
-                <li key={menu.title}>
-                  <Link
-                    href={menu.href}
-                    className={`flex items-center gap-4 px-4 py-3 rounded-lg transition-colors duration-200 ${
-                      isActive ? "bg-black text-white" : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                    onClick={() => isMobile && setIsOpen(false)}
-                  >
-                    <span className={`text-xl ${isActive ? "text-white" : "text-gray-400"}`}>{menu.icon}</span>
-                    <span className="font-medium">{menu.title}</span>
-                  </Link>
-                </li>
-              )
-            })}
-          </ul>
+      {/* Sidebar */}
+      <div
+        className={`fixed inset-y-0 left-0 w-64 bg-gray-800 text-white flex flex-col p-4 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0 md:relative z-40`}
+      >
+        <h2 className="text-xl font-bold mb-6">Admin Panel</h2>
+        <nav className="space-y-2">
+          {menuItems.map((item) => (
+            <Link
+              key={item.path}
+              href={item.path}
+              className={`flex items-center px-4 py-2 rounded transition-all duration-200 ${
+                pathname === item.path
+                  ? "bg-gray-700"
+                  : "hover:bg-gray-700 hover:translate-x-2"
+              }`}
+              onClick={() => setIsOpen(false)}
+            >
+              <span className="mr-2">{item.icon}</span>
+              {item.name}
+            </Link>
+          ))}
         </nav>
       </div>
-      {isOpen && isMobile && <div className="fixed inset-0 bg-black bg-opacity-50 z-30" onClick={toggleSidebar}></div>}
+
+      {/* Overlay for Mobile */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
+          onClick={toggleSidebar}
+        />
+      )}
     </>
-  )
+  );
 }
-
-export default Sidebar
-

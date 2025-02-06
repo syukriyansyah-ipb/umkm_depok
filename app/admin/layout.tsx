@@ -1,31 +1,27 @@
-"use client"
-import { useAppSelector } from "@/redux/hooks"
-import { useSession } from "next-auth/react"
-import type React from "react"
-import Login from "../components/admin-panel/Login"
-import Loader from "../components/admin-panel/Loader"
-import Sidebar from "../components/admin-panel/Sidebar"
+import Sidebar from "@/app/components/admin-panel/Sidebar"
+import Header from "@/app/components/admin-panel/Header"
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
-  const isLoading = useAppSelector((store) => store.loading)
-  const { data: session } = useSession()
-
-  if (!session?.user) {
-    return <Login />
-  }
-
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-gray-100">
+      {/* Sidebar */}
       <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden w-screen">
-        <main className="flex-1 overflow-y-auto bg-gray-200 p-4">
-          <div className="h-full flex flex-col">{children}</div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Header */}
+        <Header username="John Doe" />
+
+        {/* Page Content */}
+        <main className="flex-1 overflow-y-auto p-6 bg-gray-100">
+          <div className="max-w-full mx-auto">{children}</div>
         </main>
       </div>
-      {isLoading && <Loader />}
     </div>
   )
 }
-
-export default Layout
 

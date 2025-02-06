@@ -1,4 +1,4 @@
-import { connectMongoDB } from "@/libs/MongoConnect";
+import  dbConnect  from "@/lib/db";
 import Hero from "@/libs/models/Hero";
 import { NextResponse, NextRequest } from "next/server";
 
@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { title, description, image, backgroundImage, imageKey, backgroundImageKey, tiktok, instagram,  shopee, tokopedia } = body;
 
-    await connectMongoDB();
+    await dbConnect();
     const hero = await Hero.create({ title, description, image, backgroundImage, imageKey, backgroundImageKey, tiktok, instagram, shopee, tokopedia });
 
     return NextResponse.json({ message: "Hero created successfully", data: hero });

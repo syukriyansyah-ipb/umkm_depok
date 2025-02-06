@@ -1,15 +1,9 @@
-import { configureStore } from "@reduxjs/toolkit";
-import cartReducer from "./features/cartSlice";
-import loadingReducer from "./features/loadingSlice";
-import productReducer from "./features/productSlice";
+// /redux/store.ts
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer from '@/redux/reducers'; // Pastikan path-nya benar
 
 export const store = configureStore({
-    reducer: {
-        cart: cartReducer,
-        product: productReducer,
-        loading: loadingReducer,
-    },
-    devTools: process.env.NODE_ENV !== "production",
+  reducer: rootReducer,
 });
 
 export type RootState = ReturnType<typeof store.getState>;

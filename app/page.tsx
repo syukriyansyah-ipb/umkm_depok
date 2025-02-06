@@ -1,13 +1,11 @@
-// /app/page.tsx
-import Navbar from '@/components/Navbar'
-import Footer from "@/components/Footer";
-import Hero from '@/components/Hero'
-import ProductList from '@/components/ProductList';
-import Promo from '@/components/Promo';
-import About from '@/components/About';
+import Navbar from '@/app/components/front-end/Navbar';
+import Footer from "@/app/components/front-end/Footer";
+import Hero from '@/app/components/front-end/Hero';
+import ProductList from '@/app/components/front-end/ProductList';
+import Promo from '@/app/components/front-end/Promo';
+import About from '@/app/components/front-end/About';
 
-
-export default function HomePage ()  {
+export default function HomePage() {
   return (
     <div>
       <Navbar />
@@ -18,5 +16,4 @@ export default function HomePage ()  {
       <Footer />
     </div>
   );
-};
-
+}

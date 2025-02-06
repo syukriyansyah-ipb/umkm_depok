@@ -1,24 +1,27 @@
-import "./globals.css";
+import "./globals.css"
+import { Inter } from "next/font/google"
+import type { Metadata } from "next"
+import { Providers } from "@/app/providers"
+import type React from "react" // Added import for React
 
+const inter = Inter({ subsets: ["latin"] })
 
-import AuthProvider from "@/app/components/admin-panel/AuthProvider";
-import App from "@/app/App";
-import { Toaster } from "react-hot-toast";
+export const metadata: Metadata = {
+  title: "UMKM CMS",
+  description: "CMS for UMKM landing page",
+}
 
-export const metadata = {
-  title: "UMKM Hub",
-  description: "Discover world's best your showcase products",
-};
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang='en'>
-      <body className='relative'>
-        <AuthProvider> 
-            <App>{children}</App>
-          </AuthProvider>
-        <Toaster position="bottom-center" reverseOrder={false} />
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>{children}</Providers>
       </body>
     </html>
-  );
+  )
 }
+

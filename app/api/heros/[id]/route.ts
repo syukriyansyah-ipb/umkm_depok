@@ -1,4 +1,4 @@
-import { connectMongoDB } from "@/libs/MongoConnect";
+import  dbConnect  from "@/lib/db";
 import Hero from "@/libs/models/Hero";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
@@ -10,7 +10,7 @@ export async function PUT(request: NextRequest, context: { params: { id: string 
     const body = await request.json();
     const { title, description, image, backgroundImage, imageKey, backgroundImageKey, tiktok, instagram, shopee, tokopedia } = body;
 
-    await connectMongoDB();
+    await dbConnect();
     const updatedHero = await Hero.findByIdAndUpdate(new ObjectId(id), { title, description, image, backgroundImage, imageKey, backgroundImageKey, tiktok, instagram, shopee, tokopedia });
 
     return NextResponse.json({ message: "Hero updated successfully", data: updatedHero });
@@ -24,7 +24,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   try {
     const id = params.id;
 
-    await connectMongoDB();
+    await dbConnect();
     await Hero.findByIdAndDelete(new ObjectId(id) );
 
     return NextResponse.json({ message: "Hero deleted successfully" });

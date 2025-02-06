@@ -1,34 +1,26 @@
-import { NextResponse } from 'next/server';
-import * as jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers';
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
-export async function middleware(req: Request) {
-  const cookieStore = await cookies(); // Mendapatkan cookies secara asynchronous
-  const token = cookieStore.get('token');
+let isInitialized = false
 
-  if (!token || typeof token !== 'string') {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
-
-  try {
-    // Verifikasi token jika token adalah string
-    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
-
-    // Menambahkan informasi user ke objek request
-    (req as any).user = decoded;
-
-    // Cek apakah pengguna memiliki akses ke halaman
-    if (req.url.includes('/admin') && (req as any).user.role !== 'superadmin') {
-      return NextResponse.redirect(new URL('/', req.url));
+export async function middleware(request: NextRequest) {
+  if (!isInitialized) {
+    try {
+      const response = await fetch(`${request.nextUrl.origin}/api/init-superadmin`)
+      if (response.ok) {
+        console.log("Superadmin initialized successfully")
+        isInitialized = true
+      } else {
+        console.error("Failed to initialize superadmin")
+      }
+    } catch (error) {
+      console.error("Error initializing superadmin:", error)
     }
-
-    return NextResponse.next();
-  } catch (error) {
-    return NextResponse.redirect(new URL('/login', req.url));
   }
+  return NextResponse.next()
 }
 
-// Tentukan path yang lebih spesifik untuk middleware
 export const config = {
-  matcher: ['/admin'],  // Masukkan path yang lebih eksplisit
-};
+  matcher: "/",
+}
+

@@ -1,134 +1,93 @@
-"use client";
+'use client'
 
-import { useAppSelector } from "@/redux/hooks";
-import { useSession, signOut, signIn } from "next-auth/react";
-import { AiOutlineUser, AiOutlineShoppingCart } from "react-icons/ai";
-import { BsSearch } from "react-icons/bs";
-import Image from "next/image";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from 'react'
+import Link from 'next/link'
+import { Menu, X } from 'lucide-react'
+import { motion } from 'framer-motion'
 
-const Navbar = ({
-  setShowCart,
-  onSearch,
-}: {
-  setShowCart: React.Dispatch<React.SetStateAction<boolean>>;
-  onSearch: (query: string) => void;
-}) => {
-  const { data: session } = useSession();
-  const cartCount = useAppSelector((state) =>
-    state.cart.reduce((total, item) => total + item.quantity, 0)
-  );
-  
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+interface NavLinkProps {
+  href: string;
+  children: React.ReactNode;
+  mobile?: boolean;
+}
 
- 
+export default function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownVisible(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value;
-    onSearch(query);
-    if (query.trim() !== "") {
-      const trendingSection = document.getElementById("trending-products");
-      if (trendingSection) {
-        trendingSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    const handleScroll = () => {
+      if (window.scrollY > 10) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
       }
     }
-  };
 
-  const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
-  };
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   return (
-    <div className="w-full overflow-x-hidden">
-      <div className="pt-4 py-5 bg-white top-0 fixed z-20 shadow-md w-full">
-        <div className="flex flex-wrap justify-between items-center px-4 md:px-8 lg:px-16 gap-4">
-        
-          <div className="flex-shrink-0">
-            <Image src="/products/logoo.png" alt="Logo" width={125} height={100} priority />
+    <motion.nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white shadow-md' : 'bg-transparent'
+      }`}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center py-4">
+          <Link href="/" className="text-2xl font-bold text-gray-800">
+            Logo
+          </Link>
+          <div className="hidden md:flex space-x-4">
+            <NavLink href="/">Beranda</NavLink>
+            <NavLink href="/products">Produk</NavLink>
+            <NavLink href="/about">Tentang Kami</NavLink>
+            <NavLink href="/contact">Kontak</NavLink>
           </div>
-
-        
-          <div className="flex flex-1 items-center gap-2">
-            <input
-              type="text"
-              className="border-2 border-accent px-4 py-2 w-full lg:w-full rounded-md focus:outline-none text-sm"
-              placeholder="Search for products..."
-              onChange={handleSearch}
-            />
-            <button className="bg-accent text-white p-2 rounded-md hover:bg-accent-dark transition-all">
-              <BsSearch />
-            </button>
-          </div>
-
-        
-          <div className="flex gap-4 items-center">
-            {session ? (
-              <div className="relative">
-                <div
-                  className="rounded-full border-2 border-gray-500 text-gray-500 text-[32px]
-                  w-[35px] h-[35px] grid place-items-center hover:border-accent transition-all cursor-pointer"
-                  onClick={toggleDropdown} 
-                >
-                  <AiOutlineUser size={30}/>
-                </div>
-
-              
-                {dropdownVisible && (
-                  <div
-                    ref={dropdownRef}
-                    className="absolute right-0 mt-2 bg-white border border-gray-300 shadow-lg rounded-lg p-4 w-[200px] z-10"
-                  >
-                    <p className="text-gray-500 text-sm">{session.user?.name}</p>
-                    <button
-                      onClick={() => signOut()}
-                      className="text-red-500 text-sm font-medium w-full mt-2"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <button
-                onClick={() => signIn("google")}
-                className="bg-accent text-white px-4 py-2 rounded-lg text-sm"
-              >
-                Sign In
-              </button>
-            )}
-
-            <div
-              className="text-gray-500 text-[32px] relative cursor-pointer hover:text-accent transition-all"
-              onClick={() => setShowCart(true)}
+          <div className="md:hidden">
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="text-gray-800 focus:outline-none"
             >
-              <AiOutlineShoppingCart />
-              {cartCount > 0 && (
-                <div
-                  className="absolute top-[-10px] right-[-10px] bg-red-600 w-[20px] h-[20px]
-                  rounded-full text-white text-[12px] grid place-items-center font-medium"
-                >
-                  {cartCount}
-                </div>
-              )}
-            </div>
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
         </div>
       </div>
-    </div>
-  );
-};
+      {isMenuOpen && (
+        <motion.div
+          className="md:hidden bg-white"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="container mx-auto px-4 py-2 flex flex-col space-y-2">
+            <NavLink href="/" mobile>Beranda</NavLink>
+            <NavLink href="/products" mobile>Produk</NavLink>
+            <NavLink href="/about" mobile>Tentang Kami</NavLink>
+            <NavLink href="/contact" mobile>Kontak</NavLink>
+          </div>
+        </motion.div>
+      )}
+    </motion.nav>
+  )
+}
 
-export default Navbar;
+function NavLink({ href, children, mobile = false }: NavLinkProps) {
+  return (
+    <Link
+      href={href}
+      className={`text-gray-800 hover:text-gray-600 transition-colors duration-300 ${
+        mobile ? 'block py-2' : ''
+      }`}
+    >
+      {children}
+    </Link>
+  )
+}
+
