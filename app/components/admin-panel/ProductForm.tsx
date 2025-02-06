@@ -8,8 +8,6 @@ import React, { type FormEvent, useState } from "react"
 import Image from "next/image"
 import { UploadButton } from "@/utils/uploadthing"
 import type { ProductType } from "@/types/productType"
-// import { Editor } from "@tinymce/tinymce-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/front-end/ui/select"
 
 const ProductForm = () => {
   const [payload, setPayload] = useState<ProductType>({
@@ -98,20 +96,7 @@ const ProductForm = () => {
               />
             </div>
 
-            <div>
-              <label className="block mb-1 font-medium">Type</label>
-              <Select value={payload.type === null ? "" : payload.type} onValueChange={(value) => setPayload({ ...payload, type: value })}>
-                <SelectTrigger className="bg-gray-100 w-full px-4 py-2 border border-gray-300 outline-customPink rounded-md">
-                  <SelectValue placeholder="Select product type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="electronics">Electronics</SelectItem>
-                  <SelectItem value="clothing">Clothing</SelectItem>
-                  <SelectItem value="books">Books</SelectItem>
-                  <SelectItem value="home">Home & Garden</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+           
 
             <div>
               <label className="block mb-1 font-medium">Currency</label>
@@ -135,21 +120,6 @@ const ProductForm = () => {
               />
             </div>
 
-            <div>
-              <label className="block mb-1 font-medium">Bestseller</label>
-              <Select
-                value={payload.isBestSeller ? "true" : "false"}
-                onValueChange={(value) => setPayload({ ...payload, isBestSeller: value === "true" })}
-              >
-                <SelectTrigger className="bg-gray-100 w-full px-4 py-2 border border-gray-300 outline-customPink rounded-md">
-                  <SelectValue placeholder="Is this a bestseller?" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="true">Yes</SelectItem>
-                  <SelectItem value="false">No</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
         </div>
       </div>
