@@ -1,5 +1,6 @@
 import Sidebar from "@/app/components/admin-panel/Sidebar"
 import Header from "@/app/components/admin-panel/Header"
+import toast, { Toaster } from "react-hot-toast";
 
 export default function AdminLayout({
   children,
@@ -8,6 +9,7 @@ export default function AdminLayout({
 }) {
   return (
     <div className="flex h-screen overflow-hidden bg-gray-100">
+      <Toaster />
       {/* Sidebar */}
       <Sidebar />
 

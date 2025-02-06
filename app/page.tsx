@@ -3,7 +3,7 @@ import Footer from "@/app/components/front-end/Footer";
 import Hero from '@/app/components/front-end/Hero';
 import ProductList from '@/app/components/front-end/ProductList';
 import Promo from '@/app/components/front-end/Promo';
-import About from '@/app/components/front-end/About';
+import AboutSection from '@/app/components/front-end/AboutSection';
 
 export default function HomePage() {
   return (
@@ -12,7 +12,7 @@ export default function HomePage() {
       <Hero />
       <Promo />
       <ProductList />
-      <About />
+      <AboutSection />
       <Footer />
     </div>
   );

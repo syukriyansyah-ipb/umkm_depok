@@ -113,7 +113,7 @@ export default function HeroPage() {
   };
 
   return (
-    <div className="">
+    <div className="text-black">
       <Toaster />
       <div className="bg-white shadow-md rounded-lg p-6 mb-4">
         <div className="flex justify-between items-center">
