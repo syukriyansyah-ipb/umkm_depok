@@ -8,7 +8,7 @@ import React, { type FormEvent, useState } from "react"
 import Image from "next/image"
 import { UploadButton } from "@/utils/uploadthing"
 import type { ProductType } from "@/types/productType"
-import { Editor } from "@tinymce/tinymce-react"
+// import { Editor } from "@tinymce/tinymce-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const ProductForm = () => {
@@ -157,24 +157,7 @@ const ProductForm = () => {
       
       <div>
         <label className="block mb-1 font-medium">Description</label>
-        <Editor
-          apiKey={process.env.NEXT_PUBLIC_TINY_MCE}
-          init={{
-            height: 350,
-            menubar: false,
-            plugins: [
-              "advlist autolink lists link image charmap print preview anchor",
-              "searchreplace visualblocks code fullscreen",
-              "insertdatetime media table paste code help wordcount",
-            ],
-            toolbar:
-              "undo redo | formatselect | bold italic backcolor | \
-              alignleft aligncenter alignright alignjustify | \
-              bullist numlist outdent indent | removeformat | help",
-          }}
-          value={payload.description === null ? "" : payload.description}
-          onEditorChange={(content) => setPayload({ ...payload, description: content })}
-        />
+        
       </div>
 
       <div className="mt-6 mb-6">
