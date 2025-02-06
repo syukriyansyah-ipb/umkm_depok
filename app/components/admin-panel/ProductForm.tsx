@@ -9,7 +9,7 @@ import Image from "next/image"
 import { UploadButton } from "@/utils/uploadthing"
 import type { ProductType } from "@/types/productType"
 // import { Editor } from "@tinymce/tinymce-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/front-end/ui/select"
 
 const ProductForm = () => {
   const [payload, setPayload] = useState<ProductType>({
