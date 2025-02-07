@@ -9,7 +9,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 const menuItems = [
   { name: "Dashboard", path: "/admin/dashboard", icon: "🏠" },
   { name: "Hero Section", path: "/admin/hero", icon: "🖼️" },
-  { name: "Events & Promo Section", path: "/admin/events", icon: "🎉" },
+  { name: "Promo Section", path: "/admin/promotions", icon: "🎉" },
   { name: "Products Section", path: "/admin/products", icon: "🛍️" },
   { name: "About Section", path: "/admin/about", icon: "📄" },
   { name: "Users", path: "/admin/users", icon: "👥" },
