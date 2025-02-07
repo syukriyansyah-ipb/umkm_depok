@@ -1,12 +1,10 @@
 "use client"
 
-import { title } from "process";
 import { useState, useEffect } from "react"
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export default function AdminPage() {
   const [umkmData, setUmkmData] = useState({
-    titleColor: "",
     name: "",
     address: "",
     mapUrl: "",
