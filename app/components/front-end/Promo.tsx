@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react'
 import Image from "next/image"
 import { format } from 'date-fns'
 import { useRef, useEffect, useState } from 'react'
+
 import { FaFacebook, FaInstagram, FaShopify, FaTiktok } from 'react-icons/fa' // Import ikon media sosial
 
 interface Promotion {
@@ -24,13 +25,18 @@ export default function Promo() {
 
   const [promotions, setPromotions] = useState<Promotion[]>([])
 
+  const [loading, setLoading] = useState(true);
+
+
   const fetchPromotions = async () => {
     try {
       const response = await fetch('/api/promotions')
       const data = await response.json()
       setPromotions(data)
+      setLoading(false);
     } catch (error) {
       console.error('Failed to fetch promotions:', error)
+      setLoading(false);
     }
   }
 
@@ -69,6 +75,11 @@ export default function Promo() {
   return (
     <section className="py-8 bg-gradient-to-r from-purple-50 to-indigo-50">
       <div className="container mx-auto px-4">
+      {loading ? (
+          <div className="flex justify-center items-center col-span-full">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
         <motion.h2 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -77,7 +88,7 @@ export default function Promo() {
         >
           Promo
         </motion.h2>
-        
+        )}
         <div className="relative">
           <div 
             ref={containerRef}
@@ -136,6 +147,7 @@ export default function Promo() {
             ))}
           </div>
         </div>
+      
       </div>
     </section>
   )
