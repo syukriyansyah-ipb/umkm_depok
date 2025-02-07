@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
 export async function GET() {
   try {
-    await connectMongoDB();
+    // await connectMongoDB();
     const heroes = await Hero.find();
 
     return NextResponse.json({ message: "Heroes fetched successfully", data: heroes });
