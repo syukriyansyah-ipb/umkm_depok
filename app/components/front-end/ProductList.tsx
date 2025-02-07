@@ -10,69 +10,6 @@ import { FaTiktok } from 'react-icons/fa'
 import axios from "axios";
 
 
-// Data produk
-const productData: ProductType[] = [
-  { 
-    id: 1, 
-    name: 'Large Sofa Blue', 
-    category: 'Large', 
-    price: 999,
-    image: '/images/sofa_1.png',
-    type: 'Furniture',
-    description: 'A large blue sofa perfect for living rooms.',
-    isBestSeller: true
-  },
-  { 
-    id: 2, 
-    name: 'Large Sofa White', 
-    category: 'Large', 
-    price: 899,
-    type: 'Furniture',
-    image: '/images/sofa_4.png',
-    description: 'A large blue sofa perfect for living rooms.',
-    isBestSeller: true
-  },
-  { 
-    id: 3, 
-    name: 'Single Chair', 
-    category: 'Single', 
-    price: 499,
-    type: 'Furniture',
-    image: '/images/sofa_3.png',
-    description: 'A large blue sofa perfect for living rooms.',
-    isBestSeller: true
-  },
-  { 
-    id: 4, 
-    name: 'Medium Sofa Gray', 
-    category: 'Medium', 
-    price: 799,
-    type: 'Furniture',
-    image: '/images/sofa_1.png',
-    description: 'A large blue sofa perfect for living rooms.',
-    isBestSeller: true
-  },
-  { 
-    id: 5, 
-    name: 'Double Sofa Beige', 
-    category: 'Double', 
-    price: 1299,
-    type: 'Furniture',
-    image: '/images/sofa_4.png',
-    description: 'A large blue sofa perfect for living rooms.',
-    isBestSeller: true
-  },
-  { 
-    id: 6, 
-    name: 'Single Armchair', 
-    category: 'Single', 
-    price: 599,
-    type: 'Furniture',
-    image: '/images/sofa_3.png',
-    description: 'A large blue sofa perfect for living rooms.',
-    isBestSeller: true
-  },
-]
 
 const filters = [
   { id: 'all', label: 'All' },
@@ -84,7 +21,6 @@ const filters = [
 
 export default function ProductList() {
   const [activeFilter, setActiveFilter] = useState('all')
-  const [filteredProducts, setFilteredProducts] = useState(productData)
   const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null)
   
   // dari contoh
@@ -116,36 +52,14 @@ export default function ProductList() {
 
 
 // asli
-  const handleFilterClick = (filterId: string) => {
-    setActiveFilter(filterId)
-    const filtered = filterId === 'all' 
-      ? productData 
-      // : productData.filter(product => product.category.toLowerCase() === filterId)
-      : productData.filter(product => product.category === filterId)
-    setFilteredProducts(filtered)
-  }
+  
 
   return (
     <section className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Our Products</h2>
-          <div className="flex flex-wrap justify-center gap-3">
-            {filters.map(filter => (
-              <button
-                key={filter.id}
-                onClick={() => handleFilterClick(filter.id)}
-                className={`px-6 py-2 rounded-full transition-all duration-300 ${
-                  activeFilter === filter.id
-                    ? 'bg-gray-800 text-white shadow-lg'
-                    : 'bg-white text-gray-600 hover:bg-gray-100'
-                }`}
-              >
-                {filter.label}
-              </button>
-            ))
-            }
-          </div>
+         
         </div>
         {loading ? (
           <div className="flex justify-center items-center col-span-full">
@@ -169,6 +83,7 @@ export default function ProductList() {
               >
                 <div className="relative pt-[100%] w-full overflow-hidden rounded-t-xl group">
                   <div className="absolute inset-0 flex items-center justify-center">
+                    {product.image && (
                     <Image
                       src={product.image}
                       alt={product.name}
@@ -177,6 +92,7 @@ export default function ProductList() {
                       className="object-contain p-4 transition-transform duration-500 group-hover:scale-110"
                       priority
                     />
+                    )}
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4">
                     <h3 className="font-semibold text-lg text-white">{product.name}</h3>
@@ -222,12 +138,7 @@ export default function ProductList() {
         )}
       </div>
 
-      {selectedProduct && (
-        <ProductModal 
-          product={selectedProduct} 
-          onClose={() => setSelectedProduct(null)} 
-        />
-      )}
+      
     </section>
   )
 }

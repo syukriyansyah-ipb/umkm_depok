@@ -1,4 +1,4 @@
-import  dbConnect  from "@/lib/db";
+import  {dbConnect}  from "@/lib/db";
 import Hero from "@/libs/models/Hero";
 import { NextResponse, NextRequest } from "next/server";
 
