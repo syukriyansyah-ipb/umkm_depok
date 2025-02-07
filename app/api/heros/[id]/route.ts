@@ -3,12 +3,15 @@ import Hero from "@/libs/models/Hero";
 import { NextRequest, NextResponse } from "next/server";
 import { ObjectId } from "mongodb";
 
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(request: NextRequest) {
   try {
     await dbConnect();
-    const body = await request.json();
-    const { id } = params; // Ambil ID dari params
+    
+    // Ambil ID dari URL
+    const id = request.nextUrl.pathname.split("/").pop();
+    if (!id) return NextResponse.json({ message: "Missing ID parameter" }, { status: 400 });
 
+    const body = await request.json();
     const updatedHero = await Hero.findByIdAndUpdate(new ObjectId(id), body, { new: true });
 
     return NextResponse.json({ message: "Hero updated successfully", data: updatedHero });
@@ -18,10 +21,13 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest) {
   try {
     await dbConnect();
-    const { id } = params; // Ambil ID dari params
+    
+    // Ambil ID dari URL
+    const id = request.nextUrl.pathname.split("/").pop();
+    if (!id) return NextResponse.json({ message: "Missing ID parameter" }, { status: 400 });
 
     await Hero.findByIdAndDelete(new ObjectId(id));
 
