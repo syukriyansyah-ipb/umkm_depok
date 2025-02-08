@@ -36,7 +36,6 @@ export async function POST(request: NextRequest) {
       },
     }
 
-    console.log(updatedData)
     await About.findOneAndUpdate({}, { $set: updatedData }, { upsert: true, new: true })
 
     return NextResponse.json({ success: true })

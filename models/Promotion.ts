@@ -28,6 +28,21 @@ const PromotionSchema = new mongoose.Schema({
     min: [0, 'Discount cannot be negative'],
     max: [100, 'Discount cannot be more than 100%'],
   },
+  facebookUrl: {
+    type: String,
+  },
+  instagramUrl: {
+    type: String,
+  },
+  tiktokUrl: {
+    type: String,
+  },
+  tokopediaUrl: {
+    type: String,
+  },
+  shopeeUrl: {
+    type: String,
+  },
   active: {
     type: Boolean,
     default: true,

@@ -1,6 +1,8 @@
 import Sidebar from "@/app/components/admin-panel/Sidebar"
 import Header from "@/app/components/admin-panel/Header"
 import toast, { Toaster } from "react-hot-toast";
+import "@radix-ui/themes/styles.css";
+import { Theme } from "@radix-ui/themes";
 
 export default function AdminLayout({
   children,
@@ -8,6 +10,7 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
+    <Theme appearance="light" accentColor="iris">
     <div className="flex h-screen overflow-hidden bg-gray-100">
       <Toaster />
       {/* Sidebar */}
@@ -24,6 +27,7 @@ export default function AdminLayout({
         </main>
       </div>
     </div>
+    </Theme>
   )
 }
 

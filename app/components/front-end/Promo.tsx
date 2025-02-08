@@ -6,7 +6,8 @@ import Image from "next/image"
 import { format } from 'date-fns'
 import { useRef, useEffect, useState } from 'react'
 
-import { FaFacebook, FaInstagram, FaShopify, FaTiktok } from 'react-icons/fa' // Import ikon media sosial
+import { FaFacebook, FaInstagram, FaTiktok, FaStore } from 'react-icons/fa' // Import ikon media sosial
+import {  SiShopee } from "react-icons/si"
 
 interface Promotion {
   _id: string
@@ -16,6 +17,11 @@ interface Promotion {
   endDate: string
   imageUrl: string
   discount: number
+  facebookUrl: string
+  instagramUrl: string
+  tiktokUrl: string
+  shopeeUrl: string
+  tokopediaUrl: string
   active: boolean
 }
 
@@ -75,11 +81,7 @@ export default function Promo() {
   return (
     <section className="py-8 bg-gradient-to-r from-purple-50 to-indigo-50">
       <div className="container mx-auto px-4">
-      {loading ? (
-          <div className="flex justify-center items-center col-span-full">
-            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          </div>
-        ) : (
+      
         <motion.h2 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -88,7 +90,12 @@ export default function Promo() {
         >
           Promo
         </motion.h2>
-        )}
+        
+        {loading ? (
+          <div className="flex justify-center items-center col-span-full">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
         <div className="relative">
           <div 
             ref={containerRef}
@@ -128,18 +135,31 @@ export default function Promo() {
                       {promo.description}
                     </p>
                     <div className="flex space-x-2">
-                      <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-400 transition-colors">
+                    {promo.facebookUrl && (
+                      <a href={promo.facebookUrl} target="_blank" rel="noopener noreferrer" className="text-white hover:text-blue-400 transition-colors">
                         <FaFacebook size={20} />
                       </a>
-                      <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-pink-400 transition-colors">
+                    )}
+                    {promo.instagramUrl && (
+                      <a href={promo.instagramUrl} target="_blank" rel="noopener noreferrer" className="text-white hover:text-[#E1306C] transition-colors">
                         <FaInstagram size={20} />
                       </a>
-                      <a href="https://shopee.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors">
-                        <FaShopify size={20} />
+                    )}
+                    {promo.shopeeUrl && (
+                      <a href={promo.shopeeUrl} target="_blank" rel="noopener noreferrer" className="text-white hover:text-orange-400 transition-colors">
+                        <SiShopee size={20} />
                       </a>
-                      <a href="https://tokopedia.com" target="_blank" rel="noopener noreferrer" className="text-white hover:text-green-400 transition-colors">
+                    )}
+                    {promo.tiktokUrl && (
+                      <a href={promo.tiktokUrl} target="_blank" rel="noopener noreferrer" className="text-white hover:text-black transition-colors">
                         <FaTiktok size={20} />
                       </a>
+                    )}
+                    {promo.tokopediaUrl && (
+                      <a href={promo.tokopediaUrl} target="_blank" rel="noopener noreferrer" className="text-white hover:text-green-500 transition-colors">
+                        <FaStore size={20} />
+                      </a>
+                    )}
                     </div>
                   </div>
                 </div>
@@ -147,6 +167,7 @@ export default function Promo() {
             ))}
           </div>
         </div>
+        )}
       
       </div>
     </section>
