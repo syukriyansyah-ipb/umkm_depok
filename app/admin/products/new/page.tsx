@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,52 +11,72 @@ import { Textarea } from '@/app/components/ui/textarea';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Switch } from '@/app/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { UploadDropzone } from '@/lib/uploadthing';
 
+interface Category {
+  _id: string;
+  name: string;
+}
+
 const formSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(100),
+  name: z.string().min(1, 'Name is required').max(100),
   description: z.string().min(1, 'Description is required'),
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
+  price: z.number().min(0, 'Price must be positive'),
+  category: z.string().min(1, 'Category is required'),
   imageUrl: z.string().min(1, 'Image is required'),
-  discount: z.number().min(0).max(100),
-  instagramUrl: z.string().url("Invalid instagramUrl URL").optional().or(z.literal("")),
-  facebookUrl: z.string().url("Invalid facebookUrl URL").optional().or(z.literal("")),
-  tiktokUrl: z.string().url("Invalid tiktokUrl URL").optional().or(z.literal("")),
-  shopeeUrl: z.string().url("Invalid shopeeUrl URL").optional().or(z.literal("")),
-  tokopediaUrl: z.string().url("Invalid tokopediaUrl URL").optional().or(z.literal("")),
-  lazada: z.string().url("Invalid Lazada URL").optional().or(z.literal("")),
-  blibli: z.string().url("Invalid Blibli URL").optional().or(z.literal("")),
-  bukalapak: z.string().url("Invalid Bukalapak URL").optional().or(z.literal("")),
+  stock: z.number().min(0, 'Stock must be positive'),
+  socialLinks: z.object({
+    instagram: z.string().optional(),
+    facebook: z.string().optional(),
+    twitter: z.string().optional(),
+    whatsapp: z.string().optional(),
+  }),
   active: z.boolean(),
 });
 
-export default function NewPromotion() {
+export default function NewProduct() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
+      name: '',
       description: '',
-      startDate: '',
-      endDate: '',
+      price: 0,
+      category: '',
       imageUrl: '',
-      discount: 0,
-      facebookUrl: '',
-      instagramUrl: '',
-      tiktokUrl: '',
-      shopeeUrl: '',
-      tokopediaUrl: '',
+      stock: 0,
+      socialLinks: {
+        instagram: '',
+        facebook: '',
+        twitter: '',
+        whatsapp: '',
+      },
       active: true,
     },
   });
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/categories');
+        const data = await response.json();
+        setCategories(data);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/promotions', {
+      const response = await fetch('/api/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,32 +84,32 @@ export default function NewPromotion() {
         body: JSON.stringify(values),
       });
 
-      if (!response.ok) throw new Error('Failed to create promotion');
+      if (!response.ok) throw new Error('Failed to create product');
 
       router.push('/');
       router.refresh();
     } catch (error) {
-      console.error('Error creating promotion:', error);
+      console.error('Error creating product:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="container mx-auto px-4 py-1">
-      <div className="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-gray-900">Create New Promotions</h1>
-      </div>
-      <Card className='bg-white p-4 rounded-lg shadow-md'>
+    <div className="container mx-auto px-4 py-8">
+      <Card>
+        <CardHeader>
+          <CardTitle>Create New Product</CardTitle>
+        </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="title"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Title</FormLabel>
+                    <FormLabel>Name</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -115,12 +135,16 @@ export default function NewPromotion() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="startDate"
+                  name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Start Date</FormLabel>
+                      <FormLabel>Price (Rp)</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -129,18 +153,47 @@ export default function NewPromotion() {
 
                 <FormField
                   control={form.control}
-                  name="endDate"
+                  name="stock"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>End Date</FormLabel>
+                      <FormLabel>Stock</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+
+              <FormField
+                control={form.control}
+                name="category"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Category</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category._id} value={category._id}>
+                            {category.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}
@@ -152,7 +205,7 @@ export default function NewPromotion() {
                       <div className="space-y-4">
                         <UploadDropzone
                           endpoint="imageUploader"
-                          onClientUploadComplete={(res: { url: any; }[]) => {
+                          onClientUploadComplete={(res) => {
                             if (res?.[0]) {
                               field.onChange(res[0].url);
                             }
@@ -165,7 +218,7 @@ export default function NewPromotion() {
                           <div className="relative w-full h-48">
                             <img
                               src={field.value}
-                              alt="Promotion preview"
+                              alt="Product preview"
                               className="rounded-lg object-cover w-full h-full"
                             />
                           </div>
@@ -177,33 +230,15 @@ export default function NewPromotion() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="discount"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Discount (%)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="facebookUrl"
+                  name="socialLinks.instagram"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>facebookUrl</FormLabel>
+                      <FormLabel>Instagram URL</FormLabel>
                       <FormControl>
-                        <Input type="url" {...field} />
+                        <Input {...field} placeholder="https://instagram.com/..." />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -212,28 +247,12 @@ export default function NewPromotion() {
 
                 <FormField
                   control={form.control}
-                  name="instagramUrl"
+                  name="socialLinks.facebook"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>instagramUrl</FormLabel>
+                      <FormLabel>Facebook URL</FormLabel>
                       <FormControl>
-                        <Input type="url" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="tiktokUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>tiktokUrl</FormLabel>
-                      <FormControl>
-                        <Input type="url" {...field} />
+                        <Input {...field} placeholder="https://facebook.com/..." />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -242,12 +261,12 @@ export default function NewPromotion() {
 
                 <FormField
                   control={form.control}
-                  name="shopeeUrl"
+                  name="socialLinks.twitter"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>shopeeUrl</FormLabel>
+                      <FormLabel>Twitter URL</FormLabel>
                       <FormControl>
-                        <Input type="url" {...field} />
+                        <Input {...field} placeholder="https://twitter.com/..." />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -256,12 +275,12 @@ export default function NewPromotion() {
 
                 <FormField
                   control={form.control}
-                  name="tokopediaUrl"
+                  name="socialLinks.whatsapp"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>tokopediaUrl</FormLabel>
+                      <FormLabel>WhatsApp Number</FormLabel>
                       <FormControl>
-                        <Input type="url" {...field} />
+                        <Input {...field} placeholder="628123456789" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -273,7 +292,7 @@ export default function NewPromotion() {
                 control={form.control}
                 name="active"
                 render={({ field }) => (
-                  <FormItem className="flex items-center space-x-2">
+                  <FormItem className="flex items-center justify-between">
                     <FormLabel>Active</FormLabel>
                     <FormControl>
                       <Switch
@@ -293,8 +312,8 @@ export default function NewPromotion() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isLoading} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  {isLoading ? 'Creating...' : 'Create Promotion'}
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? 'Creating...' : 'Create Product'}
                 </Button>
               </div>
             </form>

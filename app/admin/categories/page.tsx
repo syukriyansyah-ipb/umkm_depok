@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/app/components/ui/button';
 import { Plus } from 'lucide-react';
-import PruductList from '@/app/components/front-end/PruductList';
+import CategoryTable from '@/app/components/admin-panel/CategoryTable';
 
 export default function Products() {
   return (
@@ -15,7 +15,7 @@ export default function Products() {
           </Button>
         </Link>
       </div>
-      <PruductList />
+      <CategoryTable />
     </div>
   );
 }
