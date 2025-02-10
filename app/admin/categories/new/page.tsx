@@ -9,13 +9,9 @@ import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { UploadDropzone } from '@/lib/uploadthing';
 
 const formSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(50),
-  description: z.string().min(1, 'Description is required'),
-  imageUrl: z.string().min(1, 'Image is required'),
-  active: z.boolean(),
+  name: z.string().min(1, 'Name is required').max(50)
 });
 
 export default function NewCategory() {
@@ -26,9 +22,6 @@ export default function NewCategory() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
-      description: '',
-      imageUrl: '',
-      active: true,
     },
   });
 
@@ -45,7 +38,7 @@ export default function NewCategory() {
 
       if (!response.ok) throw new Error('Failed to create category');
 
-      router.push('/categories');
+      router.push('/admin/categories');
       router.refresh();
     } catch (error) {
       console.error('Error creating category:', error);

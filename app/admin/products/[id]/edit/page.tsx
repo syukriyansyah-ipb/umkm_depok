@@ -1,87 +1,124 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Button } from '@/app/components/ui/button';
 import { Input } from '@/app/components/ui/input';
 import { Textarea } from '@/app/components/ui/textarea';
-import { Switch } from '@/app/components/ui/switch';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
+import { Switch } from '@/app/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { UploadDropzone } from '@/lib/uploadthing';
+import { toast } from 'sonner';
+import LoadingSpinner from '@/app/components/front-end/LoadingSpinner';
+import { use } from 'react';
+import {formatRupiah} from '@/lib/utils';
+
+interface Category {
+  _id: string;
+  name: string;
+}
 
 const formSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(100),
+  name: z.string().min(1, 'Name is required').max(100),
   description: z.string().min(1, 'Description is required'),
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
+  price: z.number().min(0, 'Price must be positive'),
+  category: z.string().min(1, 'Category is required'),
   imageUrl: z.string().min(1, 'Image is required'),
-  discount: z.number().min(0).max(100),
-  instagramUrl: z.string().url("Invalid instagramUrl URL").optional().or(z.literal("")),
-  facebookUrl: z.string().url("Invalid facebookUrl URL").optional().or(z.literal("")),
-  tiktokUrl: z.string().url("Invalid tiktokUrl URL").optional().or(z.literal("")),
-  shopeeUrl: z.string().url("Invalid shopeeUrl URL").optional().or(z.literal("")),
-  tokopediaUrl: z.string().url("Invalid tokopediaUrl URL").optional().or(z.literal("")),
-  active: z.boolean(),
+  socialLinks: z.object({
+    instagram: z.string().optional(),
+    facebook: z.string().optional(),
+    tiktok: z.string().optional(),
+    tokopedia: z.string().optional(),
+    shopee: z.string().optional(),
+  }),
+  isBestSeller: z.boolean(),
 });
 
-export default function EditPromotion() {
+export default function EditProduct({ params }: { params: Promise<{ id: string }> }) {
+  const resolvedParams = use(params);
   const router = useRouter();
-  const params = useParams<{ id: string }>();
   const [isLoading, setIsLoading] = useState(false);
-  const [isFetching, setIsFetching] = useState(true); // Tambahkan state untuk loading fetch data
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
+      name: '',
       description: '',
-      startDate: '',
-      endDate: '',
+      price: 0,
+      category: '',
       imageUrl: '',
-      discount: 0,
-      facebookUrl: '',
-      instagramUrl: '',
-      tiktokUrl: '',
-      shopeeUrl: '',
-      tokopediaUrl: '',
-      active: true,
+      socialLinks: {
+        instagram: '',
+        facebook: '',
+        tiktok: '',
+        tokopedia: '',
+        shopee: '',
+      },
+      isBestSeller: false,
     },
   });
 
   useEffect(() => {
-    const fetchPromotion = async () => {
-      setIsFetching(true); // Aktifkan loading
+    const fetchData = async () => {
       try {
-        const response = await fetch(`/api/promotions/${params.id}`);
-        if (!response.ok) throw new Error('Failed to fetch promotion');
+        const [productResponse, categoriesResponse] = await Promise.all([
+          fetch(`/api/products/${resolvedParams.id}`),
+          fetch('/api/categories')
+        ]);
 
-        const data = await response.json();
-        const startDate = new Date(data.startDate).toISOString().split('T')[0];
-        const endDate = new Date(data.endDate).toISOString().split('T')[0];
+        if (!productResponse.ok) {
+          throw new Error('Failed to fetch product');
+        }
 
-        form.reset({ ...data, startDate, endDate, facebookUrl: data.facebookUrl ?? "", 
-          instagramUrl: data.instagramUrl ?? "",
-          tiktokUrl: data.tiktokUrl ?? "",
-          shopeeUrl: data.shopeeUrl ?? "",
-          tokopediaUrl: data.tokopediaUrl ?? "" });
+        if (!categoriesResponse.ok) {
+          throw new Error('Failed to fetch categories');
+        }
+
+        const product = await productResponse.json();
+        const categories = await categoriesResponse.json();
+
+        setCategories(categories);
+        setSelectedCategory(product.category._id);
+
+        form.reset({
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          category: product.category._id,
+          imageUrl: product.imageUrl,
+          socialLinks: {
+            instagram: product.socialLinks?.instagram || '',
+            facebook: product.socialLinks?.facebook || '',
+            tiktok: product.socialLinks?.tiktok || '',
+            tokopedia: product.socialLinks?.tokopedia || '',
+            shopee: product.socialLinks?.shopee || '',
+          },
+          isBestSeller: product.isBestSeller,
+        });
       } catch (error) {
-        console.error('Error fetching promotion:', error);
+        toast.error('Failed to load product data');
+        console.error('Error fetching data:', error);
       } finally {
-        setIsFetching(false); // Matikan loading setelah data diambil
+        setIsInitialLoading(false);
       }
     };
 
-    fetchPromotion();
-  }, [params.id, form]);
+    fetchData();
+  }, [resolvedParams.id, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    console.log('Form values:', values); // Tambahkan ini untuk debugging
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/promotions/${params.id}`, {
+      const response = await fetch(`/api/products/${resolvedParams.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -89,43 +126,42 @@ export default function EditPromotion() {
         body: JSON.stringify(values),
       });
 
-      if (!response.ok) throw new Error('Failed to update promotion');
-      router.push('/admin/promotions');
-      router.refresh(); // Tetap di halaman yang sama, tetapi refresh data
+      if (!response.ok) throw new Error('Failed to update product');
+
+      toast.success('Product updated successfully');
+      router.push('/');
+      router.refresh();
     } catch (error) {
-      console.error('Error updating promotion:', error);
+      toast.error('Failed to update product');
+      console.error('Error updating product:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
-  if (!params?.id) {
-    return <div>Invalid promotion ID</div>;
+  if (isInitialLoading) {
+    return <LoadingSpinner />;
   }
 
   return (
     <div className="container mx-auto px-4 py-1">
       <div className="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-gray-900">Edit Promotions</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Update Product</h1>
       </div>
-     
-      <Card className="w-full p-4 bg-white rounded-lg shadow-md">
+      <Card className="p-4 bg-white rounded-lg shadow-md py-5">
+        
         <CardContent>
-          {isFetching ? (
-            <div className="flex justify-center items-center col-span-full">
-              <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            </div>
-          ) : (
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="title"
+                  name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Title</FormLabel>
+                      <FormLabel>Name</FormLabel>
                       <FormControl>
-                        <Input {...field} disabled={isLoading} />
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -134,48 +170,66 @@ export default function EditPromotion() {
 
                 <FormField
                   control={form.control}
-                  name="description"
+                  name="category"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} disabled={isLoading} />
-                      </FormControl>
+                      <FormLabel>Category</FormLabel>
+                      <Select 
+                        onValueChange={field.onChange} 
+                        defaultValue={selectedCategory}
+                        value={field.value}
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories.map((category) => (
+                            <SelectItem key={category._id} value={category._id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="startDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Start Date</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} disabled={isLoading} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price (Rp)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) => field.onChange(Number(e.target.value))}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-                  <FormField
-                    control={form.control}
-                    name="endDate"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>End Date</FormLabel>
-                        <FormControl>
-                          <Input type="date" {...field} disabled={isLoading} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />           
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
                   name="imageUrl"
@@ -189,9 +243,11 @@ export default function EditPromotion() {
                             onClientUploadComplete={(res) => {
                               if (res?.[0]) {
                                 field.onChange(res[0].url);
+                                toast.success('Image uploaded successfully');
                               }
                             }}
                             onUploadError={(error: Error) => {
+                              toast.error('Failed to upload image');
                               console.error('Upload error:', error);
                             }}
                           />
@@ -199,7 +255,7 @@ export default function EditPromotion() {
                             <div className="relative w-full h-48">
                               <img
                                 src={field.value}
-                                alt="Promotion preview"
+                                alt="Product preview"
                                 className="rounded-lg object-cover w-full h-full"
                               />
                             </div>
@@ -210,129 +266,110 @@ export default function EditPromotion() {
                     </FormItem>
                   )}
                 />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="socialLinks.instagram"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Instagram URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="https://instagram.com/..." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="socialLinks.facebook"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Facebook URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="https://facebook.com/..." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="socialLinks.tiktok"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tiktok URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="https://tiktok.com/..." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="socialLinks.tokopedia"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Tokopedia URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="https://tokopedia.com/..." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="socialLinks.shopee"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Shopee URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="https://shopee.com/..." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <FormField
                 control={form.control}
-                name="discount"
+                name="isBestSeller"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Discount (%)</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="number"
-                        {...field}
-                        onChange={(e) => field.onChange(Number(e.target.value))}
-                        disabled={isLoading}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="facebookUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>facebookUrl</FormLabel>
-                      <FormControl>
-                        <Input type="url" {...field} disabled={isLoading}/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="instagramUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>instagramUrl</FormLabel>
-                      <FormControl>
-                        <Input type="url" {...field} disabled={isLoading}/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="tiktokUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>tiktokUrl</FormLabel>
-                      <FormControl>
-                        <Input type="url" {...field} disabled={isLoading}/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="shopeeUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>shopeeUrl</FormLabel>
-                      <FormControl>
-                        <Input type="url" {...field} disabled={isLoading}/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="tokopediaUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>tokopediaUrl</FormLabel>
-                      <FormControl>
-                        <Input type="url" {...field} disabled={isLoading}/>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-                <FormField
-                control={form.control}
-                name="active"
-                render={({ field }) => (
-                  <FormItem className="flex items-center space-x-2">
-                    <FormLabel>Active</FormLabel>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormLabel>Best Seller?</FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        disabled={isLoading}
                       />
                     </FormControl>
                   </FormItem>
                 )}
               />
 
-                <div className="flex justify-end gap-4">
-                  <Button type="button" variant="outline" onClick={() => router.back()} disabled={isLoading}>
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={isLoading} className="bg-blue-500 text-white hover:bg-blue-600">
-                    {isLoading ? 'Updating...' : 'Update Promotion'}
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          )}
+              <div className="flex justify-end gap-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.back()}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isLoading} className='bg-blue-500 text-white'>
+                  {isLoading ? 'Updating...' : 'Update Product'}
+                </Button>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </div>

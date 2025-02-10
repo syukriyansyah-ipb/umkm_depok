@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/ca
 import { Switch } from '@/app/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { UploadDropzone } from '@/lib/uploadthing';
+import {formatRupiah} from '@/lib/utils';
 
 interface Category {
   _id: string;
@@ -25,14 +26,14 @@ const formSchema = z.object({
   price: z.number().min(0, 'Price must be positive'),
   category: z.string().min(1, 'Category is required'),
   imageUrl: z.string().min(1, 'Image is required'),
-  stock: z.number().min(0, 'Stock must be positive'),
   socialLinks: z.object({
     instagram: z.string().optional(),
     facebook: z.string().optional(),
-    twitter: z.string().optional(),
-    whatsapp: z.string().optional(),
+    tiktok: z.string().optional(),
+    shopee: z.string().optional(),
+    tokopedia: z.string().optional(),
   }),
-  active: z.boolean(),
+  isBestSeller: z.boolean(),
 });
 
 export default function NewProduct() {
@@ -48,14 +49,14 @@ export default function NewProduct() {
       price: 0,
       category: '',
       imageUrl: '',
-      stock: 0,
       socialLinks: {
         instagram: '',
         facebook: '',
-        twitter: '',
-        whatsapp: '',
+        tiktok: '',
+        shopee: '',
+        tokopedia: '',
       },
-      active: true,
+      isBestSeller: false,
     },
   });
 
@@ -96,27 +97,79 @@ export default function NewProduct() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <Card>
-        <CardHeader>
-          <CardTitle>Create New Product</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="container mx-auto px-4 py-1">
+      <div className="flex justify-between items-center mb-8 bg-white p-4 rounded-lg shadow-md">
+        <h1 className="text-2xl font-bold text-gray-900">New Product</h1>
+      </div>
+      <Card className='bg-white p-4 rounded-lg shadow-md'>
+        <CardContent className="mt-5">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className='max-h-40 overflow-y-auto bg-white text-gray-900'>
+                          {categories.map((category) => (
+                            <SelectItem key={category._id} value={category._id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price (Rp)</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="text"
+                          value={formatRupiah(field.value)}
+                          onChange={(e) => {
+                            const numericValue = Number(e.target.value.replace(/\D/g, ''));
+                            field.onChange(numericValue);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+               
+              </div>
+              
 
               <FormField
                 control={form.control}
@@ -135,100 +188,40 @@ export default function NewProduct() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={form.control}
-                  name="price"
+                  name="imageUrl"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Price (Rp)</FormLabel>
+                      <FormLabel>Image</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="stock"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Stock</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={(e) => field.onChange(Number(e.target.value))}
-                        />
+                        <div className="space-y-4">
+                          <UploadDropzone
+                            endpoint="imageUploader"
+                            onClientUploadComplete={(res) => {
+                              if (res?.[0]) {
+                                field.onChange(res[0].url);
+                              }
+                            }}
+                            onUploadError={(error: Error) => {
+                              console.error('Upload error:', error);
+                            }}
+                            className="p-4 border border-dashed border-gray-300 rounded-lg"
+                          />
+                          {field.value && (
+                            <div className="relative w-full h-48">
+                              <img
+                                src={field.value}
+                                alt="Product preview"
+                                className="rounded-lg object-cover w-full h-full"
+                              />
+                            </div>
+                          )}
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
-
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Category</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {categories.map((category) => (
-                          <SelectItem key={category._id} value={category._id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="imageUrl"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Image</FormLabel>
-                    <FormControl>
-                      <div className="space-y-4">
-                        <UploadDropzone
-                          endpoint="imageUploader"
-                          onClientUploadComplete={(res) => {
-                            if (res?.[0]) {
-                              field.onChange(res[0].url);
-                            }
-                          }}
-                          onUploadError={(error: Error) => {
-                            console.error('Upload error:', error);
-                          }}
-                        />
-                        {field.value && (
-                          <div className="relative w-full h-48">
-                            <img
-                              src={field.value}
-                              alt="Product preview"
-                              className="rounded-lg object-cover w-full h-full"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
@@ -261,12 +254,12 @@ export default function NewProduct() {
 
                 <FormField
                   control={form.control}
-                  name="socialLinks.twitter"
+                  name="socialLinks.tiktok"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Twitter URL</FormLabel>
+                      <FormLabel>Tiktok URL</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="https://twitter.com/..." />
+                        <Input {...field} placeholder="https://tiktok.com/..." />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -275,25 +268,41 @@ export default function NewProduct() {
 
                 <FormField
                   control={form.control}
-                  name="socialLinks.whatsapp"
+                  name="socialLinks.tokopedia"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>WhatsApp Number</FormLabel>
+                      <FormLabel>Tokopedia URL</FormLabel>
                       <FormControl>
-                        <Input {...field} placeholder="628123456789" />
+                        <Input {...field} placeholder="https://tokopedia.com/..." />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
+                <FormField
+                  control={form.control}
+                  name="socialLinks.shopee"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Shopee URL</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="https://shopee.com/..." />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                
               </div>
 
               <FormField
                 control={form.control}
-                name="active"
+                name="isBestSeller"
                 render={({ field }) => (
-                  <FormItem className="flex items-center justify-between">
-                    <FormLabel>Active</FormLabel>
+                  <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormLabel>Best Seller?</FormLabel>
                     <FormControl>
                       <Switch
                         checked={field.value}
@@ -309,10 +318,11 @@ export default function NewProduct() {
                   type="button"
                   variant="outline"
                   onClick={() => router.back()}
+                  className='bg-gray-500 text-white'
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading} className="bg-blue-500 text-white">
                   {isLoading ? 'Creating...' : 'Create Product'}
                 </Button>
               </div>

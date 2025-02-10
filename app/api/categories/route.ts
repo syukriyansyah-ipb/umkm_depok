@@ -8,6 +8,7 @@ export async function GET() {
     const categories = await Category.find({}).sort({ createdAt: -1 });
     return NextResponse.json(categories);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 });
   }
 }
@@ -20,6 +21,7 @@ export async function POST(req: Request) {
     const category = await Category.create(body);
     return NextResponse.json(category);
   } catch (error) {
+    console.error(error);
     return NextResponse.json({ error: 'Failed to create category' }, { status: 500 });
   }
 }

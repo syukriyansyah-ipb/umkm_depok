@@ -2,11 +2,16 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 
 interface Product {
-  id: number;
-  name: string;
-  type: string;
-  image: string;
-  description: string;
+  _id: string
+  name: string
+  category: {
+    _id: string,
+    name: string
+  }
+  price: number | string
+  imageUrl: string | null
+  description: string | null
+  isBestSeller: boolean
 }
 
 interface ProductModalProps {
@@ -35,14 +40,14 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
         >
           <div className="relative h-64 bg-gray-100 mb-4 rounded-lg overflow-hidden">
             <Image
-              src={product.image || "/placeholder.svg"}
+              src={product.imageUrl || "/placeholder.svg"}
               alt={product.name}
               layout="fill"
               objectFit="contain"
             />
           </div>
           <h2 className="text-2xl font-bold mb-2 text-center">{product.name}</h2>
-          <p className="text-gray-600 mb-4 text-center">{product.type}</p>
+          <p className="text-gray-600 mb-4 text-center">{product.category.name}</p>
           <p className="text-gray-800 mb-4">{product.description}</p>
           <div className="text-center">
             <button

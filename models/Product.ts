@@ -24,20 +24,16 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Please provide an image URL'],
   },
-  stock: {
-    type: Number,
-    required: [true, 'Please provide stock quantity'],
-    min: [0, 'Stock cannot be negative'],
-  },
   socialLinks: {
     instagram: String,
     facebook: String,
-    twitter: String,
-    whatsapp: String,
+    tiktok: String,
+    shopee: String,
+    tokopedia: String,
   },
-  active: {
+  isBestSeller: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   createdAt: {
     type: Date,

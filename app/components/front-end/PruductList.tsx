@@ -97,12 +97,13 @@ export default function ProductList() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex gap-4 overflow-x-auto pb-4">
+    <div className="space-y-8 p-6">
+      {/* Category Filters */}
+      <div className="flex gap-3 overflow-x-auto pb-4">
         <Button
           variant={selectedCategory === '' ? 'default' : 'outline'}
           onClick={() => setSelectedCategory('')}
-          className="whitespace-nowrap"
+          className="whitespace-nowrap text-sm font-medium transition-all duration-300 hover:bg-gray-100"
         >
           All Products
         </Button>
@@ -111,15 +112,27 @@ export default function ProductList() {
             key={category._id}
             variant={selectedCategory === category._id ? 'default' : 'outline'}
             onClick={() => setSelectedCategory(category._id)}
-            className="whitespace-nowrap"
+            className="whitespace-nowrap text-sm font-medium transition-all duration-300 hover:bg-gray-100"
           >
             {category.name}
           </Button>
         ))}
       </div>
 
+      {/* Product List */}
       {loading ? (
-        <LoadingSpinner />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <div key={index} className="animate-pulse">
+              <div className="h-60 bg-gray-100 rounded-lg"></div>
+              <div className="p-4 space-y-3">
+                <div className="h-5 bg-gray-100 rounded"></div>
+                <div className="h-4 bg-gray-100 rounded"></div>
+                <div className="h-4 bg-gray-100 rounded"></div>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
         <motion.div
           variants={container}
@@ -129,41 +142,41 @@ export default function ProductList() {
         >
           {products.map((product) => (
             <motion.div key={product._id} variants={item}>
-              <Card className="overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                <div className="relative h-48">
+              <Card className="overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                {/* Product Image */}
+                <div className="relative h-60">
                   <img
                     src={product.imageUrl}
                     alt={product.name}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
-                  <div className="absolute top-2 right-2">
-                    <span className={`px-2 py-1 rounded-full text-sm ${
-                      product.active ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
-                    }`}>
-                      {product.active ? 'Active' : 'Inactive'}
+                  <div className="absolute top-3 right-3">
+                    <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white">
+                      {product.category.name}
                     </span>
                   </div>
                 </div>
                 <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-2">
+                  <div className="flex justify-between items-start mb-3">
                     <div>
-                      <h2 className="text-xl font-semibold">{product.name}</h2>
+                      <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
                       <p className="text-sm text-gray-500">{product.category.name}</p>
                     </div>
                     <p className="text-lg font-bold text-primary">
                       {formatRupiah(product.price)}
                     </p>
                   </div>
-                  <p className="text-gray-600 mb-4 line-clamp-2">{product.description}</p>
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">{product.description}</p>
                   <p className="text-sm text-gray-500">Stock: {product.stock}</p>
-                  
-                  <div className="flex gap-2 mt-4">
+
+                  {/* Social Links */}
+                  <div className="flex gap-3 mt-4">
                     {product.socialLinks.instagram && (
                       <a
                         href={product.socialLinks.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-pink-500 hover:text-pink-600"
+                        className="text-gray-500 hover:text-pink-500 transition-colors duration-300"
                       >
                         <Instagram className="h-5 w-5" />
                       </a>
@@ -173,7 +186,7 @@ export default function ProductList() {
                         href={product.socialLinks.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-600 hover:text-blue-700"
+                        className="text-gray-500 hover:text-blue-600 transition-colors duration-300"
                       >
                         <Facebook className="h-5 w-5" />
                       </a>
@@ -183,7 +196,7 @@ export default function ProductList() {
                         href={product.socialLinks.twitter}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-500"
+                        className="text-gray-500 hover:text-blue-400 transition-colors duration-300"
                       >
                         <Twitter className="h-5 w-5" />
                       </a>
@@ -193,27 +206,26 @@ export default function ProductList() {
                         href={`https://wa.me/${product.socialLinks.whatsapp}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-green-500 hover:text-green-600"
+                        className="text-gray-500 hover:text-green-500 transition-colors duration-300"
                       >
                         <MessageCircle className="h-5 w-5" />
                       </a>
                     )}
                   </div>
                 </CardContent>
-                <CardFooter className="p-4 bg-gray-50">
-                  <div className="flex justify-end gap-2 w-full">
-                    <Link href={`/products/${product._id}/edit`}>
-                      <Button variant="outline" size="sm">
-                        <Edit2 className="h-4 w-4 mr-1" />
-                        Edit
-                      </Button>
-                    </Link>
+                <CardFooter className="p-4 border-t border-gray-100">
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" className="flex-1">
+                      <Edit2 className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
                     <Button
                       variant="destructive"
                       size="sm"
+                      className="flex-1"
                       onClick={() => handleDelete(product._id)}
                     >
-                      <Trash2 className="h-4 w-4 mr-1" />
+                      <Trash2 className="h-4 w-4 mr-2" />
                       Delete
                     </Button>
                   </div>

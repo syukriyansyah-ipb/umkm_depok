@@ -3,7 +3,7 @@ export interface ProductType {
   name: string
   category: string
   price: number | string;
-  image: string | null;
+  imageUrl: string | null;
   type: string | null;
   description: string | null;
   isBestSeller: boolean;

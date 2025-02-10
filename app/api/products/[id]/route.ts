@@ -9,7 +9,7 @@ export async function GET(
     const id = (await params).id // 'a', 'b', or 'c'
     try {
         await dbConnect();
-        const product = await Product.findById(id);
+        const product = await Product.findById(id).populate('category');
         if (!product) {
           return NextResponse.json({ error: 'Product not found' }, { status: 404 });
         }
