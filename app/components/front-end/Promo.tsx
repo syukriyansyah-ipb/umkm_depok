@@ -105,7 +105,7 @@ export default function Promo() {
             {promotions.map((promo) => (
               <motion.div
                 key={promo._id}
-                className="flex-none w-[65vw] md:w-[38vw] h-[200px] relative rounded-xl shadow-lg overflow-hidden snap-center select-none bg-gradient-to-br from-purple-500 to-indigo-500"
+                className="flex-none w-[80vw] md:w-[38vw] h-[200px] relative rounded-xl shadow-lg overflow-hidden snap-center select-none bg-gradient-to-br from-purple-500 to-indigo-500"
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
               >
