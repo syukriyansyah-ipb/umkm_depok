@@ -1,21 +1,20 @@
+'use client'
 import Sidebar from "@/app/components/admin-panel/Sidebar"
 import Header from "@/app/components/admin-panel/Header"
 import toast, { Toaster } from "react-hot-toast";
 import "@radix-ui/themes/styles.css";
 import { Theme } from "@radix-ui/themes";
-import { getServerSession } from "next-auth/next"
 import { redirect } from "next/navigation"
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { useSession } from 'next-auth/react';
+// import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 
-export default async function AdminLayout({
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const session = await getServerSession(authOptions)
-
-  console.log("Session: ", session)
+  const {data: session} = useSession();
   if (!session || !["admin", "superadmin"].includes(session.user.role as string)) {
     redirect("/unauthorized")
   }

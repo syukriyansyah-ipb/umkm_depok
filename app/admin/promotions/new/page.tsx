@@ -12,6 +12,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { Switch } from '@/app/components/ui/switch';
 import { UploadDropzone } from '@/lib/uploadthing';
+import toast from 'react-hot-toast';
+import Loading from '@/app/components/front-end/LoadingSpinner'
 
 const formSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100),
@@ -65,15 +67,21 @@ export default function NewPromotion() {
       });
 
       if (!response.ok) throw new Error('Failed to create promotion');
-
-      router.push('/');
+      toast.success('Promotion created successfully!');
+      router.push('/admin/promotions');
       router.refresh();
     } catch (error) {
-      console.error('Error creating promotion:', error);
+      toast.error('Error creating promotion:', error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+      return <div className="flex justify-center items-center h-screen">
+        <Loading />
+      </div>
+    }
 
   return (
     <div className="container mx-auto px-4 py-1">

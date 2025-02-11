@@ -1,11 +1,10 @@
+'use client'
 import DashboardComponent from '@/app/components/admin-panel/Dashboard';
-import { getServerSession } from "next-auth/next"
 import { redirect } from "next/navigation"
+import { useSession } from 'next-auth/react';
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
-
-export default async function AdminDashboard() {
-  const session = await getServerSession(authOptions)
+export default function AdminDashboard() {
+  const {data: session} = useSession();
 
   if (!session || !["admin", "superadmin"].includes(session.user.role as string)) {
     redirect("/unauthorized")
