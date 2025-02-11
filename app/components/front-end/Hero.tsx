@@ -7,6 +7,7 @@ import { useState, useEffect } from 'react'
 import { FaFacebook, FaInstagram, FaTiktok, FaStore } from 'react-icons/fa'
 import { SiShopee } from "react-icons/si"
 import axios from "axios"
+import Loading from '@/app/components/front-end/LoadingSpinner'
 
 interface HeroData {
   _id: string;
@@ -53,7 +54,9 @@ export default function Hero() {
   }, [heros]);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>
+    return <div className="flex justify-center items-center h-screen">
+      <Loading />
+    </div>
   }
 
   if (!heros || heros.length === 0) {

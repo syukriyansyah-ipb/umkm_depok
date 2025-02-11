@@ -76,7 +76,7 @@ export default function ProductModal({ product, onClose }: ProductModalProps) {
           {/* Deskripsi dengan Scroll */}
           <div className="overflow-y-auto max-h-40 mb-4">
             <p className="text-gray-800 text-sm">
-              product.description                
+              {product.description}                
             </p>
           </div>
         </motion.div>

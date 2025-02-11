@@ -35,10 +35,9 @@ export default function AboutSection() {
   }, [])
 
   if (!isClient) return null
-  if (!aboutData) return <div className="flex justify-center items-center h-screen">Loading...</div>
 
   return (
-    <section className="bg-gradient-to-b from-blue-50 to-white py-20 p-5">
+    <section id="about" className="bg-gradient-to-b from-blue-50 to-white py-20 p-5">
       <div className="container mx-auto px-4">
         <motion.h2 
           initial={{ opacity: 0, y: -20 }}
@@ -48,6 +47,11 @@ export default function AboutSection() {
         >
           Tentang Kami
         </motion.h2>
+        {aboutData === null ? (
+          <div className="flex justify-center items-center col-span-full">
+            <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
@@ -111,6 +115,7 @@ export default function AboutSection() {
             ></iframe>
           </motion.div>
         </div>
+        )}  
       </div>
     </section>
   )

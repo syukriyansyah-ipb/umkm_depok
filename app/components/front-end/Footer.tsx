@@ -70,27 +70,27 @@ const Footer = () => {
             <h3 className="text-lg font-semibold mb-4">Ikuti Kami</h3>
             <div className="flex space-x-4">
                 {aboutData?.socialMedia?.facebook && (
-                  <a href={aboutData.socialMedia.facebook || "#"} className="text-blue-600 hover:text-blue-800">
+                  <a href={aboutData.socialMedia.facebook || "#"} className="text-grey-400 hover:text-blue-800">
                     <FaFacebook size={24} />
                   </a>
                 )}
                 {aboutData?.socialMedia?.tiktok && (
-                  <a href={aboutData.socialMedia.tiktok || "#"} className="text-zinc-700 hover:text-black">
+                  <a href={aboutData.socialMedia.tiktok || "#"} className="text-grey-400 hover:text-black">
                     <FaTiktok size={24} />
                   </a>
                 )}
                 {aboutData?.socialMedia?.instagram && (
-                  <a href={aboutData.socialMedia.instagram || "#"} className="text-pink-600 hover:text-pink-800">
+                  <a href={aboutData.socialMedia.instagram || "#"} className="text-grey-400 hover:text-pink-800">
                     <FaInstagram size={24} />
                   </a>
                 )}
                 {aboutData?.socialMedia?.shopee && (
-                  <a href={aboutData.socialMedia.shopee || "#"} className="text-orange-700 hover:text-orange-900">
+                  <a href={aboutData.socialMedia.shopee || "#"} className="text-grey-400 hover:text-orange-900">
                     <SiShopee size={24} />
                   </a>
                 )}
                 {aboutData?.socialMedia?.tokopedia && (
-                  <a href={aboutData.socialMedia.tokopedia || "#"} className="text-green-700 hover:text-green-900">
+                  <a href={aboutData.socialMedia.tokopedia || "#"} className="text-grey-400 hover:text-green-900">
                     <FaStore size={24} />
                   </a>
                 )}

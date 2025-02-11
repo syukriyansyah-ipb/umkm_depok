@@ -1,240 +1,209 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { Card, CardContent, CardFooter } from '@/app/components/ui/card';
-import { Button } from '@/app/components/ui/button';
-import { Edit2, Trash2, Instagram, Facebook, Twitter, MessageCircle } from 'lucide-react';
-import LoadingSpinner from './LoadingSpinner';
-import { formatRupiah } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import ProductModal from './ui/ProductModal'
+import Image from 'next/image'
+import { FaFacebook, FaInstagram, FaTiktok, FaStore } from 'react-icons/fa' // Import ikon media sosial
+import {  SiShopee } from "react-icons/si"
+import axios from "axios"
 
-interface Category {
-  _id: string;
-  name: string;
-}
-
-interface Product {
-  _id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: Category;
-  imageUrl: string;
-  stock: number;
+interface ProductType {
+  _id: string
+  name: string
+  category: {
+    _id: string,
+    name: string
+  }
+  price: number | string
+  imageUrl: string | null
+  description: string | null
   socialLinks: {
-    instagram?: string;
-    facebook?: string;
-    twitter?: string;
-    whatsapp?: string;
-  };
-  active: boolean;
+    instagram: string,
+    facebook: string,
+    tiktok: string,
+    shopee: string,
+    tokopedia: string,
+  }
+  isBestSeller: boolean
 }
 
 export default function ProductList() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState({ _id: 'best_seller', name: 'Best Seller' }) // Default filter
+  const [selectedProduct, setSelectedProduct] = useState<ProductType | null>(null)
+  const [products, setProducts] = useState<ProductType[]>([])
+  const [categories, setCategories] = useState<{ _id: string; name: string }[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetchCategories();
-    fetchProducts();
-  }, [selectedCategory]);
+    // Fetch categories
+    axios.get("/api/categories")
+      .then((res) => {
+        const fetchedCategories = res.data.map((category: any) => ({
+          _id: category._id,
+          name: category.name
+        }))
+        setCategories([{ _id: 'best_seller', name: 'Best Seller' }, ...fetchedCategories])
+      })
+      .catch(err => console.error(err))
 
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch('/api/categories');
-      const data = await response.json();
-      setCategories(data);
-    } catch (error) {
-      console.error('Failed to fetch categories:', error);
-    }
-  };
+    // Fetch products
+    axios
+      .get("/api/products")
+      .then((res) => {
+        const formattedProducts = res.data.map((item: any) => ({
+          _id: item._id,
+          imageUrl: item.imageUrl,
+          name: item.name,
+          price: Number(item.price),
+          category: item.category, // Ambil kategori dari relasi category
+          description: item.description,
+          socialLinks: item.socialLinks,
+          isBestSeller: item.isBestSeller
+        }))
+        setProducts(formattedProducts)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error(err)
+        setLoading(false)
+      })
+  }, [])
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const url = selectedCategory
-        ? `/api/products?category=${selectedCategory}`
-        : '/api/products';
-      const response = await fetch(url);
-      const data = await response.json();
-      setProducts(data);
-    } catch (error) {
-      console.error('Failed to fetch products:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this product?')) return;
-
-    try {
-      await fetch(`/api/products/${id}`, {
-        method: 'DELETE',
-      });
-      fetchProducts();
-    } catch (error) {
-      console.error('Failed to delete product:', error);
-    }
-  };
-
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
+  // Filter produk berdasarkan kategori yang dipilih
+  const filteredProducts = activeFilter._id === 'best_seller'
+    ? products.filter(product => product.isBestSeller) // Filter produk Best Seller
+    : products.filter(product => product.category._id === activeFilter._id) // Filter produk berdasarkan kategori
 
   return (
-    <div className="space-y-8 p-6">
-      {/* Category Filters */}
-      <div className="flex gap-3 overflow-x-auto pb-4">
-        <Button
-          variant={selectedCategory === '' ? 'default' : 'outline'}
-          onClick={() => setSelectedCategory('')}
-          className="whitespace-nowrap text-sm font-medium transition-all duration-300 hover:bg-gray-100"
-        >
-          All Products
-        </Button>
-        {categories.map((category) => (
-          <Button
-            key={category._id}
-            variant={selectedCategory === category._id ? 'default' : 'outline'}
-            onClick={() => setSelectedCategory(category._id)}
-            className="whitespace-nowrap text-sm font-medium transition-all duration-300 hover:bg-gray-100"
-          >
-            {category.name}
-          </Button>
-        ))}
-      </div>
+    <section className="py-16 bg-gray-50 flex justify-center">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-800 mb-5">Produk</h2>
+          <div className="flex justify-center flex-wrap gap-4">
+            {categories.map(filter => (
+              <button
+                key={filter._id}
+                onClick={() => setActiveFilter(filter)}
+                className={`px-4 py-2 rounded-full transition-colors duration-300 text-md sm:text-sm ${
+                  activeFilter._id === filter._id
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-gray-200 text-gray-800 hover:bg-gray-300'
+                }`}
+              >
+                {filter.name}
+              </button>
+            ))}
+          </div>
+        </div>
 
-      {/* Product List */}
-      {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, index) => (
             <div key={index} className="animate-pulse">
-              <div className="h-60 bg-gray-100 rounded-lg"></div>
+              <div className="h-60 bg-gray-400 rounded-lg"></div>
               <div className="p-4 space-y-3">
-                <div className="h-5 bg-gray-100 rounded"></div>
-                <div className="h-4 bg-gray-100 rounded"></div>
-                <div className="h-4 bg-gray-100 rounded"></div>
+                <div className="h-5 bg-gray-400 rounded"></div>
+                <div className="h-4 bg-gray-400 rounded"></div>
+                <div className="h-4 bg-gray-400 rounded"></div>
               </div>
             </div>
           ))}
         </div>
-      ) : (
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {products.map((product) => (
-            <motion.div key={product._id} variants={item}>
-              <Card className="overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-300">
-                {/* Product Image */}
-                <div className="relative h-60">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  <div className="absolute top-3 right-3">
-                    <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-primary text-white">
-                      {product.category.name}
-                    </span>
-                  </div>
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h2 className="text-lg font-semibold text-gray-800">{product.name}</h2>
-                      <p className="text-sm text-gray-500">{product.category.name}</p>
+        ) : (
+          <motion.div 
+            layout
+            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-center"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.map(product => (
+                <motion.div
+                  layout
+                  key={product._id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
+                  transition={{ duration: 0.3 }}
+                  className="flex flex-col relative"
+                  // style={{ maxHeight: '400px' }}
+                >
+                  <div className="relative pt-[85%] w-full overflow-hidden group">
+                    <div className="absolute inset-0 flex items-center justify-center bg-gray-300 rounded-lg">
+                      {product.imageUrl && (
+                        <Image
+                          src={product.imageUrl}
+                          alt={product.name}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-contain p-4 transition-transform duration-500 group-hover:scale-110"
+                          priority
+                        />
+                      )}
                     </div>
-                    <p className="text-lg font-bold text-primary">
-                      {formatRupiah(product.price)}
-                    </p>
+                    {product.isBestSeller && (
+                      <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                        Best Seller
+                      </span>
+                    )}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 space-y-2">
+                      <button 
+                        onClick={() => setSelectedProduct(product)}
+                        className="bg-white/90 backdrop-blur-sm text-gray-800 px-4 py-2 rounded-full hover:bg-white shadow-lg"
+                      >
+                        Detail
+                      </button>
+                    </div>
                   </div>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">{product.description}</p>
-                  <p className="text-sm text-gray-500">Stock: {product.stock}</p>
+                  <div className="p-3">
+                      <p className="text-xs md:text-xs text-gray-600">{product.category.name}</p>
+                      <p className="font-semibold text-xs md:text-lg text-gray-800">{product.name}</p>
+                      <p className="font-semibold text-xs md:text-lg text-gray-800">Rp {product.price.toLocaleString('id-ID')}</p>
+                      <div className="flex space-x-1 md:space-x-2 mt-2">
+                        {product.socialLinks.facebook && (
+                          <a href={product.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-blue-400 transition-colors">
+                            <FaFacebook  className="w-4 h-4 md:w-5 md:h-5" />
+                          </a>
+                        )}
+                        {product.socialLinks.instagram && (
+                          <a href={product.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-[#E1306C] transition-colors">
+                            <FaInstagram className="w-4 h-4 md:w-5 md:h-5" />
+                          </a>
+                        )}
+                        {product.socialLinks.shopee && (
+                          <a href={product.socialLinks.shopee} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-orange-400 transition-colors">
+                            <SiShopee className="w-4 h-4 md:w-5 md:h-5" />
+                          </a>
+                        )}
+                        {product.socialLinks.tiktok && (
+                          <a href={product.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-black transition-colors">
+                            <FaTiktok className="w-4 h-4 md:w-5 md:h-5" />
+                          </a>
+                        )}
+                        {product.socialLinks.tokopedia && (
+                          <a href={product.socialLinks.tokopedia} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-green-500 transition-colors">
+                            <FaStore className="w-4 h-4 md:w-5 md:h-5" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+          
+        )}
+      </div>
 
-                  {/* Social Links */}
-                  <div className="flex gap-3 mt-4">
-                    {product.socialLinks.instagram && (
-                      <a
-                        href={product.socialLinks.instagram}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-500 hover:text-pink-500 transition-colors duration-300"
-                      >
-                        <Instagram className="h-5 w-5" />
-                      </a>
-                    )}
-                    {product.socialLinks.facebook && (
-                      <a
-                        href={product.socialLinks.facebook}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-500 hover:text-blue-600 transition-colors duration-300"
-                      >
-                        <Facebook className="h-5 w-5" />
-                      </a>
-                    )}
-                    {product.socialLinks.twitter && (
-                      <a
-                        href={product.socialLinks.twitter}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-500 hover:text-blue-400 transition-colors duration-300"
-                      >
-                        <Twitter className="h-5 w-5" />
-                      </a>
-                    )}
-                    {product.socialLinks.whatsapp && (
-                      <a
-                        href={`https://wa.me/${product.socialLinks.whatsapp}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-500 hover:text-green-500 transition-colors duration-300"
-                      >
-                        <MessageCircle className="h-5 w-5" />
-                      </a>
-                    )}
-                  </div>
-                </CardContent>
-                <CardFooter className="p-4 border-t border-gray-100">
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Edit2 className="h-4 w-4 mr-2" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => handleDelete(product._id)}
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
-      )}
-    </div>
-  );
+      {/* Modal untuk menampilkan detail produk */}
+      <AnimatePresence>
+        {selectedProduct && (
+          <ProductModal
+            product={selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+          />
+        )}
+      </AnimatePresence>
+    </section>
+  )
 }

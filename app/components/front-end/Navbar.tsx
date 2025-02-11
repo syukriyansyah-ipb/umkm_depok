@@ -5,28 +5,37 @@ import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 
-interface NavLinkProps {
-  href: string;
-  children: React.ReactNode;
-  mobile?: boolean;
+interface AboutData {
+  name: string
 }
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [aboutData, setAboutData] = useState<AboutData | null>(null)
 
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 10) {
-        setIsScrolled(true)
-      } else {
-        setIsScrolled(false)
-      }
+      setIsScrolled(window.scrollY > 10)
     }
-
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  useEffect(() => {
+    fetch("/api/about")
+      .then((res) => res.json())
+      .then((data) => setAboutData(data))
+      .catch((err) => console.error("Error fetching UMKM data:", err))
+  }, [])
+
+  const scrollToSection = (id: string) => {
+    const section = document.getElementById(id)
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" })
+      setIsMenuOpen(false)
+    }
+  }
 
   return (
     <motion.nav
@@ -39,20 +48,17 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <Link href="/" className="text-2xl font-bold text-gray-800">
-            Logo
-          </Link>
+          <button onClick={() => scrollToSection('hero')} className="text-2xl font-bold text-gray-800">
+            {aboutData ? aboutData.name : "Loading..."}
+          </button>
           <div className="hidden md:flex space-x-4">
-            <NavLink href="/">Beranda</NavLink>
-            <NavLink href="/products">Produk</NavLink>
-            <NavLink href="/about">Tentang Kami</NavLink>
-            <NavLink href="/contact">Kontak</NavLink>
+            <NavLink onClick={() => scrollToSection('hero')}>Beranda</NavLink>
+            <NavLink onClick={() => scrollToSection('promo')}>Promo</NavLink>
+            <NavLink onClick={() => scrollToSection('products')}>Produk</NavLink>
+            <NavLink onClick={() => scrollToSection('about')}>Tentang Kami</NavLink>
           </div>
           <div className="md:hidden">
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-gray-800 focus:outline-none"
-            >
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-800 focus:outline-none">
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -67,10 +73,10 @@ export default function Navbar() {
           transition={{ duration: 0.3 }}
         >
           <div className="container mx-auto px-4 py-2 flex flex-col space-y-2">
-            <NavLink href="/" mobile>Beranda</NavLink>
-            <NavLink href="/products" mobile>Produk</NavLink>
-            <NavLink href="/about" mobile>Tentang Kami</NavLink>
-            <NavLink href="/contact" mobile>Kontak</NavLink>
+            <NavLink onClick={() => scrollToSection('hero')} mobile>Beranda</NavLink>
+            <NavLink onClick={() => scrollToSection('promo')} mobile>Promo</NavLink>
+            <NavLink onClick={() => scrollToSection('products')} mobile>Produk</NavLink>
+            <NavLink onClick={() => scrollToSection('about')} mobile>Tentang Kami</NavLink>
           </div>
         </motion.div>
       )}
@@ -78,16 +84,15 @@ export default function Navbar() {
   )
 }
 
-function NavLink({ href, children, mobile = false }: NavLinkProps) {
+function NavLink({ children, onClick, mobile = false }: { children: React.ReactNode; onClick: () => void; mobile?: boolean }) {
   return (
-    <Link
-      href={href}
+    <button
+      onClick={onClick}
       className={`text-gray-800 hover:text-gray-600 transition-colors duration-300 ${
         mobile ? 'block py-2' : ''
       }`}
     >
       {children}
-    </Link>
+    </button>
   )
 }
-

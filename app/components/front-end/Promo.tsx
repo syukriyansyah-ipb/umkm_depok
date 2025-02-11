@@ -79,7 +79,7 @@ export default function Promo() {
   }
 
   return (
-    <section className="py-8 bg-gradient-to-r from-purple-50 to-indigo-50">
+    <section id="promo" className="py-8 bg-gradient-to-r from-purple-50 to-indigo-50">
       <div className="container mx-auto px-4">
       
         <motion.h2 
