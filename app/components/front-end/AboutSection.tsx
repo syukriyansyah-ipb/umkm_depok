@@ -1,9 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Facebook, Instagram, ShoppingBag, TwitterIcon as TikTok, Phone, Mail } from "lucide-react"
-import { FaTiktok } from "react-icons/fa"
-import { SiTiktok, SiShopee } from "react-icons/si"
+import { Phone, Mail } from "lucide-react"
+
+import { FaFacebook, FaInstagram, FaTiktok, FaStore } from 'react-icons/fa' // Import ikon media sosial
+import {  SiShopee } from "react-icons/si"
 
 import { motion } from "framer-motion"
 
@@ -57,33 +58,33 @@ export default function AboutSection() {
             <p className="text-gray-700">
               <strong className="text-blue-800">Alamat:</strong> {aboutData.address}
             </p>
-            <div className="text-gray-700 mb-6">
-                <Phone className="inline-block mr-2 text-blue-600" size={20} /> {aboutData.phoneNumber} | <Mail className="inline-block text-blue-600 hover:text-blue-800 transition-colors duration-300" /> {aboutData.email}
+            <div className="text-gray-700 mb-4">
+                <Phone className="inline-block mr-2 text-blue-600" size={15} /> {aboutData.phoneNumber} | <Mail className="inline-block text-blue-600 hover:text-blue-800 transition-colors duration-300" size={15}/> {aboutData.email}
             </div>
-            <div className="flex space-x-6 mb-6 ">
+            <div className="flex space-x-4 mb-6">
               {aboutData.socialMedia.facebook && (
-                <a href={aboutData.socialMedia.facebook} target="_blank" rel="noopener noreferrer">
-                  <Facebook className="text-blue-600 hover:text-blue-800 transition-colors duration-300" size={28} />
+                <a href={aboutData.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-400 transition-colors">
+                  <FaFacebook size={20} />
                 </a>
               )}
               {aboutData.socialMedia.instagram && (
-                <a href={aboutData.socialMedia.instagram} target="_blank" rel="noopener noreferrer">
-                  <Instagram className="text-pink-600 hover:text-pink-800 transition-colors duration-300" size={28} />
-                </a>
-              )}
-              {aboutData.socialMedia.tiktok && (
-                <a href={aboutData.socialMedia.tiktok} target="_blank" rel="noopener noreferrer">
-                  <FaTiktok className="text-black hover:text-gray-800 transition-colors duration-300" size={28} />
+                <a href={aboutData.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-[#E1306C] transition-colors">
+                  <FaInstagram size={20} />
                 </a>
               )}
               {aboutData.socialMedia.shopee && (
-                <a href={aboutData.socialMedia.shopee} target="_blank" rel="noopener noreferrer">
-                  <SiShopee className="text-orange-600 hover:text-orange-800 transition-colors duration-300" size={28} />
+                <a href={aboutData.socialMedia.shopee} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-orange-400 transition-colors">
+                  <SiShopee size={20} />
+                </a>
+              )}
+              {aboutData.socialMedia.tiktok && (
+                <a href={aboutData.socialMedia.tiktok} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-black transition-colors">
+                  <FaTiktok size={20} />
                 </a>
               )}
               {aboutData.socialMedia.tokopedia && (
-                <a href={aboutData.socialMedia.tokopedia} target="_blank" rel="noopener noreferrer">
-                  <ShoppingBag className="text-green-600 hover:text-green-800 transition-colors duration-300" size={28} />
+                <a href={aboutData.socialMedia.tokopedia} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-green-500 transition-colors">
+                  <FaStore size={20} />
                 </a>
               )}
             </div>
