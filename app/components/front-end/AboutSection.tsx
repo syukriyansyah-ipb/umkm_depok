@@ -1,11 +1,9 @@
-"use client"
+'use client'
 
 import { useState, useEffect } from "react"
 import { Phone, Mail } from "lucide-react"
-
-import { FaFacebook, FaInstagram, FaTiktok, FaStore } from 'react-icons/fa' // Import ikon media sosial
-import {  SiShopee } from "react-icons/si"
-
+import { FaFacebook, FaInstagram, FaTiktok, FaStore } from 'react-icons/fa'
+import { SiShopee } from "react-icons/si"
 import { motion } from "framer-motion"
 
 interface AboutData {
@@ -26,14 +24,17 @@ interface AboutData {
 
 export default function AboutSection() {
   const [aboutData, setAboutData] = useState<AboutData | null>(null)
+  const [isClient, setIsClient] = useState(false)
 
   useEffect(() => {
+    setIsClient(true)
     fetch("/api/about")
       .then((res) => res.json())
       .then((data) => setAboutData(data))
       .catch((err) => console.error("Error fetching UMKM data:", err))
   }, [])
 
+  if (!isClient) return null
   if (!aboutData) return <div className="flex justify-center items-center h-screen">Loading...</div>
 
   return (
@@ -58,9 +59,16 @@ export default function AboutSection() {
             <p className="text-gray-700">
               <strong className="text-blue-800">Alamat:</strong> {aboutData.address}
             </p>
-            <div className="text-gray-700 mb-4">
-                <Phone className="inline-block mr-2 text-blue-600" size={15} /> {aboutData.phoneNumber} | <Mail className="inline-block text-blue-600 hover:text-blue-800 transition-colors duration-300" size={15}/> {aboutData.email}
+            <div className="text-gray-700 mb-4 flex flex-col sm:flex-row sm:items-center">
+              <div>
+                <Phone className="inline-block mr-2 text-blue-600" size={15} />
+                {aboutData.phoneNumber}
+              </div>
+              <div className="sm:ml-4">
+                <Mail className="inline-block text-blue-600 hover:text-blue-800 transition-colors duration-300" size={15} /> {aboutData.email}
+              </div>
             </div>
+
             <div className="flex space-x-4 mb-6">
               {aboutData.socialMedia.facebook && (
                 <a href={aboutData.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-blue-400 transition-colors">

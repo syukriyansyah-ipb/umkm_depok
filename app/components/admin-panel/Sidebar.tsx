@@ -8,9 +8,10 @@ import { FaBars, FaTimes } from "react-icons/fa";
 
 const menuItems = [
   { name: "Dashboard", path: "/admin/dashboard", icon: "🏠" },
-  { name: "Hero Section", path: "/admin/hero", icon: "🖼️" },
+  { name: "Hero Section", path: "/admin/heros", icon: "🖼️" },
   { name: "Promo Section", path: "/admin/promotions", icon: "🎉" },
   { name: "Products Section", path: "/admin/products", icon: "🛍️" },
+  { name: "Categories Section", path: "/admin/categories", icon: "📁" },
   { name: "About Section", path: "/admin/about", icon: "📄" },
   { name: "Users", path: "/admin/users", icon: "👥" },
 ];
