@@ -113,7 +113,7 @@ export default function ProductList() {
         ) : (
           <motion.div 
             layout
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-center"
+            className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-center"
           >
             <AnimatePresence mode="popLayout">
               {filteredProducts.map(product => (
@@ -155,33 +155,33 @@ export default function ProductList() {
                     </div>
                   </div>
                   <div className="p-3">
-                      <p className="text-sm text-gray-600">{product.category.name}</p>
-                      <h3 className="font-semibold text-md text-gray-800">{product.name}</h3>
-                      <p className="font-bold text-md text-gray-800">Rp {product.price.toLocaleString('id-ID')}</p>
-                      <div className="flex space-x-2 mt-2">
+                      <p className="text-xs md:text-xs text-gray-600">{product.category.name}</p>
+                      <p className="font-semibold text-xs md:text-lg text-gray-800">{product.name}</p>
+                      <p className="font-semibold text-xs md:text-lg text-gray-800">Rp {product.price.toLocaleString('id-ID')}</p>
+                      <div className="flex space-x-1 md:space-x-2 mt-2">
                         {product.socialLinks.facebook && (
                           <a href={product.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-blue-400 transition-colors">
-                            <FaFacebook size={18} />
+                            <FaFacebook  className="w-4 h-4 md:w-5 md:h-5" />
                           </a>
                         )}
                         {product.socialLinks.instagram && (
                           <a href={product.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-[#E1306C] transition-colors">
-                            <FaInstagram size={18} />
+                            <FaInstagram className="w-4 h-4 md:w-5 md:h-5" />
                           </a>
                         )}
                         {product.socialLinks.shopee && (
                           <a href={product.socialLinks.shopee} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-orange-400 transition-colors">
-                            <SiShopee size={18} />
+                            <SiShopee className="w-4 h-4 md:w-5 md:h-5" />
                           </a>
                         )}
                         {product.socialLinks.tiktok && (
                           <a href={product.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-black transition-colors">
-                            <FaTiktok size={18} />
+                            <FaTiktok className="w-4 h-4 md:w-5 md:h-5" />
                           </a>
                         )}
                         {product.socialLinks.tokopedia && (
                           <a href={product.socialLinks.tokopedia} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-green-500 transition-colors">
-                            <FaStore size={18} />
+                            <FaStore className="w-4 h-4 md:w-5 md:h-5" />
                           </a>
                         )}
                       </div>
