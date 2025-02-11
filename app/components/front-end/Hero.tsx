@@ -99,21 +99,31 @@ export default function Hero() {
                 transition={{ duration: 0.5, delay: 0.6 }}
                 className="flex space-x-4 justify-center"
               >
-                <a href={currentHero.socialLinks.facebook || "#"} className="text-blue-600 hover:text-blue-800">
-                  <FaFacebook size={24} />
-                </a>
-                <a href={currentHero.socialLinks.tiktok || "#"} className="text-zinc-700 hover:text-black">
-                  <FaTiktok size={24} />
-                </a>
-                <a href={currentHero.socialLinks.instagram || "#"} className="text-pink-600 hover:text-pink-800">
-                  <FaInstagram size={24} />
-                </a>
-                <a href={currentHero.socialLinks.shopee || "#"} className="text-orange-700 hover:text-orange-900">
-                  <SiShopee size={24} />
-                </a>
-                <a href={currentHero.socialLinks.tokopedia || "#"} className="text-green-700 hover:text-green-900">
-                  <FaStore size={24} />
-                </a>
+                {currentHero?.socialLinks?.facebook && (
+                  <a href={currentHero.socialLinks.facebook || "#"} className="text-blue-600 hover:text-blue-800">
+                    <FaFacebook size={24} />
+                  </a>
+                )}
+                {currentHero?.socialLinks?.tiktok && (
+                  <a href={currentHero.socialLinks.tiktok || "#"} className="text-zinc-700 hover:text-black">
+                    <FaTiktok size={24} />
+                  </a>
+                )}
+                {currentHero?.socialLinks?.instagram && (
+                  <a href={currentHero.socialLinks.instagram || "#"} className="text-pink-600 hover:text-pink-800">
+                    <FaInstagram size={24} />
+                  </a>
+                )}
+                {currentHero?.socialLinks?.shopee && (
+                  <a href={currentHero.socialLinks.shopee || "#"} className="text-orange-700 hover:text-orange-900">
+                    <SiShopee size={24} />
+                  </a>
+                )}
+                {currentHero?.socialLinks?.tokopedia && (
+                  <a href={currentHero.socialLinks.tokopedia || "#"} className="text-green-700 hover:text-green-900">
+                    <FaStore size={24} />
+                  </a>
+                )}
               </motion.div>
 
             </div>

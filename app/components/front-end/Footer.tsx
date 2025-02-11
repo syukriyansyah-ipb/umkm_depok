@@ -1,6 +1,8 @@
 'use client'
 import Link from 'next/link';
 import { useState, useEffect } from "react";
+import { FaFacebook, FaInstagram, FaTiktok, FaStore } from 'react-icons/fa'
+import { SiShopee } from "react-icons/si"
 
 interface AboutData {
   name: string;
@@ -17,6 +19,7 @@ interface AboutData {
     shopee?: string;
   };
 }
+
 
 const Footer = () => {
   const [aboutData, setAboutData] = useState<AboutData | null>(null);
@@ -66,31 +69,31 @@ const Footer = () => {
           <div>
             <h3 className="text-lg font-semibold mb-4">Ikuti Kami</h3>
             <div className="flex space-x-4">
-              {aboutData?.socialMedia?.facebook && (
-                <a href={aboutData.socialMedia.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                  Facebook
-                </a>
-              )}
-              {aboutData?.socialMedia?.instagram && (
-                <a href={aboutData.socialMedia.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                  Instagram
-                </a>
-              )}
-              {aboutData?.socialMedia?.tiktok && (
-                <a href={aboutData.socialMedia.tiktok} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                  TikTok
-                </a>
-              )}
-              {aboutData?.socialMedia?.shopee && (
-                <a href={aboutData.socialMedia.shopee} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                  Shopee
-                </a>
-              )}
-              {aboutData?.socialMedia?.tokopedia && (
-                <a href={aboutData.socialMedia.tokopedia} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                  Tokopedia
-                </a>
-              )}
+                {aboutData?.socialMedia?.facebook && (
+                  <a href={aboutData.socialMedia.facebook || "#"} className="text-blue-600 hover:text-blue-800">
+                    <FaFacebook size={24} />
+                  </a>
+                )}
+                {aboutData?.socialMedia?.tiktok && (
+                  <a href={aboutData.socialMedia.tiktok || "#"} className="text-zinc-700 hover:text-black">
+                    <FaTiktok size={24} />
+                  </a>
+                )}
+                {aboutData?.socialMedia?.instagram && (
+                  <a href={aboutData.socialMedia.instagram || "#"} className="text-pink-600 hover:text-pink-800">
+                    <FaInstagram size={24} />
+                  </a>
+                )}
+                {aboutData?.socialMedia?.shopee && (
+                  <a href={aboutData.socialMedia.shopee || "#"} className="text-orange-700 hover:text-orange-900">
+                    <SiShopee size={24} />
+                  </a>
+                )}
+                {aboutData?.socialMedia?.tokopedia && (
+                  <a href={aboutData.socialMedia.tokopedia || "#"} className="text-green-700 hover:text-green-900">
+                    <FaStore size={24} />
+                  </a>
+                )}
             </div>
           </div>
         </div>
