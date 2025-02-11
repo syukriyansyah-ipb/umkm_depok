@@ -13,8 +13,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/ca
 import { Switch } from '@/app/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { UploadDropzone } from '@/lib/uploadthing';
-import { toast } from 'sonner';
-import LoadingSpinner from '@/app/components/front-end/LoadingSpinner';
+import toast from 'react-hot-toast';
+import Loading from '@/app/components/front-end/LoadingSpinner'
 import { use } from 'react';
 import {formatRupiah} from '@/lib/utils';
 
@@ -68,6 +68,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const [productResponse, categoriesResponse] = await Promise.all([
           fetch(`/api/products/${resolvedParams.id}`),
@@ -103,10 +104,12 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
           },
           isBestSeller: product.isBestSeller,
         });
+        setIsLoading(false);
       } catch (error) {
-        toast.error('Failed to load product data');
-        console.error('Error fetching data:', error);
+        setIsLoading(false);
+        toast.error('Error fetching data:', error);
       } finally {
+        setIsLoading(false);
         setIsInitialLoading(false);
       }
     };
@@ -129,7 +132,7 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
       if (!response.ok) throw new Error('Failed to update product');
 
       toast.success('Product updated successfully');
-      router.push('/');
+      router.push('/admin/products');
       router.refresh();
     } catch (error) {
       toast.error('Failed to update product');
@@ -139,8 +142,10 @@ export default function EditProduct({ params }: { params: Promise<{ id: string }
     }
   };
 
-  if (isInitialLoading) {
-    return <LoadingSpinner />;
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Loading />
+    </div>
   }
 
   return (

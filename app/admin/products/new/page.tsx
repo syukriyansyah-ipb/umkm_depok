@@ -14,6 +14,8 @@ import { Switch } from '@/app/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { UploadDropzone } from '@/lib/uploadthing';
 import {formatRupiah} from '@/lib/utils';
+import toast from 'react-hot-toast';
+import Loading from '@/app/components/front-end/LoadingSpinner'
 
 interface Category {
   _id: string;
@@ -67,7 +69,7 @@ export default function NewProduct() {
         const data = await response.json();
         setCategories(data);
       } catch (error) {
-        console.error('Failed to fetch categories:', error);
+        toast.error('Failed to fetch categories:', error);
       }
     };
 
@@ -86,15 +88,21 @@ export default function NewProduct() {
       });
 
       if (!response.ok) throw new Error('Failed to create product');
-
-      router.push('/');
+      toast.success('Product created successfully');
+      router.push('/admin/products');
       router.refresh();
     } catch (error) {
-      console.error('Error creating product:', error);
+      toast.error('Error creating product:', error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Loading />
+    </div>
+  }
 
   return (
     <div className="container mx-auto px-4 py-1">
