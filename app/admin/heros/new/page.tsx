@@ -12,6 +12,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
 import { UploadDropzone } from '@/lib/uploadthing';
 import { Switch } from '@/app/components/ui/switch';
+import toast from 'react-hot-toast';
+import Loading from '@/app/components/front-end/LoadingSpinner'
 
 
 const formSchema = z.object({
@@ -63,15 +65,21 @@ export default function NewProduct() {
       });
 
       if (!response.ok) throw new Error('Failed to create hero');
-
-      router.push('/heros');
+      toast.success('Hero created successfully');
+      router.push('/admin/heros');
       router.refresh();
     } catch (error) {
-      console.error('Error creating hero:', error);
+      toast.error('Error creating hero:', error);
     } finally {
       setIsLoading(false);
     }
   };
+
+  if (isLoading) {
+      return <div className="flex justify-center items-center h-screen">
+        <Loading />
+      </div>
+    }
 
   return (
     <div className="container mx-auto px-4 py-1">

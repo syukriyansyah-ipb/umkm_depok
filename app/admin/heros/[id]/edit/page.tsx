@@ -13,10 +13,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/ca
 import { Switch } from '@/app/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/app/components/ui/select';
 import { UploadDropzone } from '@/lib/uploadthing';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import LoadingSpinner from '@/app/components/front-end/LoadingSpinner';
 import { use } from 'react';
-
+import Loading from '@/app/components/front-end/LoadingSpinner'
+import { setLoading } from '@/redux/features/loadingSlice';
 
 const formSchema = z.object({
   title: z.string().min(1, 'Name is required').max(100),
@@ -37,7 +38,6 @@ export default function EditHero({ params }: { params: Promise<{ id: string }> }
   const resolvedParams = use(params);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -88,7 +88,7 @@ export default function EditHero({ params }: { params: Promise<{ id: string }> }
         toast.error('Failed to load hero data');
         console.error('Error fetching data:', error);
       } finally {
-        setIsInitialLoading(false);
+        setLoading(false);
       }
     };
 
@@ -96,7 +96,6 @@ export default function EditHero({ params }: { params: Promise<{ id: string }> }
   }, [resolvedParams.id, form]);
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log('Form values:', values); // Tambahkan ini untuk debugging
     try {
       setIsLoading(true);
       const response = await fetch(`/api/heros/${resolvedParams.id}`, {
@@ -120,8 +119,10 @@ export default function EditHero({ params }: { params: Promise<{ id: string }> }
     }
   };
 
-  if (isInitialLoading) {
-    return <LoadingSpinner />;
+  if (isLoading) {
+    return <div className="flex justify-center items-center h-screen">
+      <Loading />
+    </div>
   }
 
   return (
