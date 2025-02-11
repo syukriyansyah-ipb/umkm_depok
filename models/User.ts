@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  role: { type: String, enum: ["superadmin", "karyawan"], required: true },
+  role: { type: String, enum: ["superadmin", "admin"], required: true },
   isPasswordChanged: { type: Boolean, default: false }, // Tambahkan field ini
 });
 

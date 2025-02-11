@@ -1,26 +1,29 @@
+import { withAuth } from "next-auth/middleware"
 import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
 
-let isInitialized = false
+export default withAuth(
+  function middleware(req) {
+    const { pathname } = req.nextUrl
+    const token = req.nextauth.token
 
-export async function middleware(request: NextRequest) {
-  if (!isInitialized) {
-    try {
-      const response = await fetch(`${request.nextUrl.origin}/api/init-superadmin`)
-      if (response.ok) {
-        console.log("Superadmin initialized successfully")
-        isInitialized = true
-      } else {
-        console.error("Failed to initialize superadmin")
-      }
-    } catch (error) {
-      console.error("Error initializing superadmin:", error)
+    // Periksa apakah pengguna memiliki peran admin atau superadmin
+    if (pathname.startsWith("/admin") && !["admin", "superadmin"].includes(token?.role as string)) {
+      return NextResponse.redirect(new URL("/unauthorized", req.url))
     }
-  }
-  return NextResponse.next()
-}
+
+    // Periksa apakah pengguna telah mengganti password default
+    if (pathname.startsWith("/admin") && token?.isPasswordChanged === false) {
+      return NextResponse.redirect(new URL("/change-password", req.url))
+    }
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token,
+    },
+  },
+)
 
 export const config = {
-  matcher: "/",
+  matcher: ["/admin/:path*"],
 }
 

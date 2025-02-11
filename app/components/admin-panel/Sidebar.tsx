@@ -1,4 +1,3 @@
-// components/admin-panel/Sidebar.tsx
 "use client";
 
 import Link from "next/link";
@@ -6,21 +5,23 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { FaBars, FaTimes } from "react-icons/fa";
 
-const menuItems = [
-  { name: "Dashboard", path: "/admin/dashboard", icon: "🏠" },
-  { name: "Hero Section", path: "/admin/heros", icon: "🖼️" },
-  { name: "Promo Section", path: "/admin/promotions", icon: "🎉" },
-  { name: "Products Section", path: "/admin/products", icon: "🛍️" },
-  { name: "Categories Section", path: "/admin/categories", icon: "📁" },
-  { name: "About Section", path: "/admin/about", icon: "📄" },
-  { name: "Users", path: "/admin/users", icon: "👥" },
-];
-
-export default function Sidebar() {
+// Anggap role didapat dari props atau context/auth
+export default function Sidebar({ role }: { role: string }) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+
+  // Daftar menu, filter Users hanya untuk Superadmin
+  const menuItems = [
+    { name: "Dashboard", path: "/admin/dashboard", icon: "🏠" },
+    { name: "Hero Section", path: "/admin/heros", icon: "🖼️" },
+    { name: "Promo Section", path: "/admin/promotions", icon: "🎉" },
+    { name: "Products Section", path: "/admin/products", icon: "🛍️" },
+    { name: "Categories Section", path: "/admin/categories", icon: "📁" },
+    { name: "About Section", path: "/admin/about", icon: "📄" },
+    ...(role === "superadmin" ? [{ name: "Users", path: "/admin/users", icon: "👥" }] : []),
+  ];
 
   return (
     <>
