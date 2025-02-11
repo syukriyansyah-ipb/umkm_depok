@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ProductModal from './ui/ProductModal'
 import Image from 'next/image'
-import { FaTiktok } from 'react-icons/fa'
+import { FaFacebook, FaInstagram, FaTiktok, FaStore } from 'react-icons/fa' // Import ikon media sosial
+import {  SiShopee } from "react-icons/si"
 import axios from "axios"
 
 interface ProductType {
@@ -17,6 +18,13 @@ interface ProductType {
   price: number | string
   imageUrl: string | null
   description: string | null
+  socialLinks: {
+    instagram: string,
+    facebook: string,
+    tiktok: string,
+    shopee: string,
+    tokopedia: string,
+  }
   isBestSeller: boolean
 }
 
@@ -50,6 +58,7 @@ export default function ProductList() {
           price: Number(item.price),
           category: item.category, // Ambil kategori dari relasi category
           description: item.description,
+          socialLinks: item.socialLinks,
           isBestSeller: item.isBestSeller
         }))
         setProducts(formattedProducts)
@@ -116,8 +125,9 @@ export default function ProductList() {
                   exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
                   transition={{ duration: 0.3 }}
                   className="flex flex-col relative"
+                  // style={{ maxHeight: '400px' }}
                 >
-                  <div className="relative pt-[100%] w-full overflow-hidden group">
+                  <div className="relative pt-[85%] w-full overflow-hidden group">
                     <div className="absolute inset-0 flex items-center justify-center bg-gray-300 rounded-lg">
                       {product.imageUrl && (
                         <Image
@@ -142,30 +152,39 @@ export default function ProductList() {
                       >
                         View Details
                       </button>
-                      <div className="flex space-x-4 mt-2">
-                        <a 
-                          href="https://www.tiktok.com/@yourstore" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-white hover:text-gray-300 transition-colors duration-300"
-                        >
-                          <FaTiktok size={24} />
-                        </a>
-                        <a 
-                          href="https://shopee.co.id/yourstore" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-white hover:text-gray-300 transition-colors duration-300"
-                        >
-                          {/* <ShopeeIcon /> */}
-                        </a>
-                      </div>
                     </div>
                   </div>
                   <div className="p-3">
-                      <p className="text-sm text-gray-700">{product.category.name}</p>
-                      <h3 className="font-semibold text-md text-gray-900">{product.name}</h3>
-                      <p className="font-bold text-md text-gray-900">Rp {product.price.toLocaleString('id-ID')}</p>
+                      <p className="text-sm text-gray-600">{product.category.name}</p>
+                      <h3 className="font-semibold text-md text-gray-800">{product.name}</h3>
+                      <p className="font-bold text-md text-gray-800">Rp {product.price.toLocaleString('id-ID')}</p>
+                      <div className="flex space-x-2 mt-2">
+                        {product.socialLinks.facebook && (
+                          <a href={product.socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-blue-400 transition-colors">
+                            <FaFacebook size={18} />
+                          </a>
+                        )}
+                        {product.socialLinks.instagram && (
+                          <a href={product.socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-[#E1306C] transition-colors">
+                            <FaInstagram size={18} />
+                          </a>
+                        )}
+                        {product.socialLinks.shopee && (
+                          <a href={product.socialLinks.shopee} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-orange-400 transition-colors">
+                            <SiShopee size={18} />
+                          </a>
+                        )}
+                        {product.socialLinks.tiktok && (
+                          <a href={product.socialLinks.tiktok} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-black transition-colors">
+                            <FaTiktok size={18} />
+                          </a>
+                        )}
+                        {product.socialLinks.tokopedia && (
+                          <a href={product.socialLinks.tokopedia} target="_blank" rel="noopener noreferrer" className="text-gray-700 hover:text-green-500 transition-colors">
+                            <FaStore size={18} />
+                          </a>
+                        )}
+                      </div>
                     </div>
                   
                 </motion.div>
