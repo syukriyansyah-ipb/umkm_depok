@@ -56,18 +56,19 @@ export default function ProductList() {
           imageUrl: item.imageUrl,
           name: item.name,
           price: Number(item.price),
-          category: item.category, // Ambil kategori dari relasi category
+          category: item.category,
           description: item.description,
           socialLinks: item.socialLinks,
           isBestSeller: item.isBestSeller
-        }))
-        setProducts(formattedProducts)
-        setLoading(false)
+        }));
+        setProducts(formattedProducts);
       })
       .catch((err) => {
-        console.error(err)
-        setLoading(false)
+        console.error(err);
       })
+      .finally(() => {
+        setLoading(false);
+      });
   }, [])
 
   // Filter produk berdasarkan kategori yang dipilih
