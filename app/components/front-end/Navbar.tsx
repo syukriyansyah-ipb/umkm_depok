@@ -48,7 +48,7 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <button onClick={() => scrollToSection('hero')} className="text-2xl font-bold text-gray-800">
+          <button onClick={() => scrollToSection('hero')} className="text-2xl font-bold text-gray-800 md:ml-3">
             {aboutData ? aboutData.name : "Loading..."}
           </button>
           <div className="hidden md:flex space-x-4">
