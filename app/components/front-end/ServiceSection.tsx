@@ -22,27 +22,25 @@ export default function ServiceSection() {
   }, [])
 
   return (
-    <section className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
+    <section id="service" className="py-20 bg-gradient-to-r from-blue-50 to-purple-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-4xl font-bold text-center mb-12 text-gray-800">Layanan Kami</h2>
-        <div className="space-y-12 pl-6 sm:pl-0">
+        <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">Layanan Kami</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {services.map((service, index) => {
             const IconComponent = Icons[service.icon as keyof typeof Icons] as IconType
             return (
               <motion.div
                 key={service._id}
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.2 }}
-                className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-8"
+                className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300"
               >
-                <div className="text-6xl text-gray-800">
+                <div className="text-6xl text-gray-800 mb-4 flex justify-center">
                   <IconComponent />
                 </div>
-                <div>
-                  <h3 className="text-2xl font-semibold text-gray-800 mb-2">{service.title}</h3>
-                  <p className="text-gray-600 max-w-2xl">{service.description}</p>
-                </div>
+                <h3 className="text-2xl font-semibold text-gray-800 mb-2 text-center">{service.title}</h3>
+                <p className="text-gray-600 text-center">{service.description}</p>
               </motion.div>
             )
           })}

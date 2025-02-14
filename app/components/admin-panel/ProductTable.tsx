@@ -106,9 +106,17 @@ export default function PromotionList() {
             <TableRow key={product._id}>
               <TableCell>{product.name}</TableCell>
               {/* <TableCell>{product.description}</TableCell> */}
-              <TableCell>
+              {/* <TableCell>
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{product.description}</ReactMarkdown>
+              </TableCell> */}
+              <TableCell>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {product.description.split(" ").length > 20
+                    ? product.description.split(" ").slice(0, 20).join(" ") + "..."
+                    : product.description}
+                </ReactMarkdown>
               </TableCell>
+
               <TableCell>{formatRupiah(product.price)}</TableCell>
               <TableCell>
                 <Image src={product.imageUrl} alt={product.name} width={50} height={50} />
