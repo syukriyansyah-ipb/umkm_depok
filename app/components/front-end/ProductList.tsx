@@ -80,7 +80,7 @@ export default function ProductList() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-800 mb-5">Produk</h2>
-          {loading ? (
+          {loading || categories.length === 0 || filteredProducts.length === 0 ? (
             <div className="flex justify-center items-center col-span-full">
               <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
