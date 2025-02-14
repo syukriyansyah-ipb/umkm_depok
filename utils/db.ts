@@ -1,7 +1,11 @@
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGODB_URI || ""; // Pastikan menggunakan .env.local
-const options = {};
+const uri = process.env.MONGODB_URI || "";
+const options = {
+  serverSelectionTimeoutMS: 10000, // Batasi waktu pencarian server
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;

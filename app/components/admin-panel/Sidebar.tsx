@@ -19,6 +19,7 @@ export default function Sidebar({ role }: { role: string }) {
     { name: "Promo Section", path: "/admin/promotions", icon: "🎉" },
     { name: "Products Section", path: "/admin/products", icon: "🛍️" },
     { name: "Categories Section", path: "/admin/categories", icon: "📁" },
+    { name: "Services Section", path: "/admin/services-section", icon: "🛠️" },
     { name: "About Section", path: "/admin/about", icon: "📄" },
     ...(role === "superadmin" ? [{ name: "Users", path: "/admin/users", icon: "👥" }] : []),
   ];

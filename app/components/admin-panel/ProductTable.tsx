@@ -12,6 +12,8 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { ExternalLink } from 'lucide-react';
 import Loading from '@/app/components/front-end/LoadingSpinner'
 import toast from 'react-hot-toast';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Product {
   _id: string;
@@ -103,7 +105,10 @@ export default function PromotionList() {
           {currentData.map((product) => (
             <TableRow key={product._id}>
               <TableCell>{product.name}</TableCell>
-              <TableCell>{product.description}</TableCell>
+              {/* <TableCell>{product.description}</TableCell> */}
+              <TableCell>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{product.description}</ReactMarkdown>
+              </TableCell>
               <TableCell>{formatRupiah(product.price)}</TableCell>
               <TableCell>
                 <Image src={product.imageUrl} alt={product.name} width={50} height={50} />
