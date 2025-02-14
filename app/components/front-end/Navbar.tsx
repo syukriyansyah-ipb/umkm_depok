@@ -55,6 +55,7 @@ export default function Navbar() {
             <NavLink onClick={() => scrollToSection('hero')}>Beranda</NavLink>
             <NavLink onClick={() => scrollToSection('promo')}>Promo</NavLink>
             <NavLink onClick={() => scrollToSection('products')}>Produk</NavLink>
+            <NavLink onClick={() => scrollToSection('service')}>Layanan</NavLink>
             <NavLink onClick={() => scrollToSection('about')}>Tentang Kami</NavLink>
           </div>
           <div className="md:hidden">
