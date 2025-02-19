@@ -28,7 +28,6 @@ export default function RootLayout({
   }, [])
 
   return (
-    <Analytics />
     <html lang="id">
       <head>
         <title>{aboutData?.name || "UMKM CMS"}</title>
@@ -39,6 +38,7 @@ export default function RootLayout({
         <meta property="og:url" content={process.env.NEXT_PUBLIC_SITE_URL || "https://example.com"} />
       </head>
       <body className={inter.className}>
+        <Analytics />
         <Providers>{children}</Providers>
       </body>
     </html>
